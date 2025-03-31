@@ -13,11 +13,35 @@ export default function Vendedor() {
         return value.substring(0, 14); // Garante que não passe do limite
     };
     return (
-        <form className="grid gap-2 mt-10 border-2 rounded-md p-5">
-            <label className="pl-5">Vendedor</label>
-            <input className="border rounded-md w-50 pl-2" type="text"/>
-            <label className="pl-5">CPFº</label>
-            <input className="border rounded-md w-50 pl-2" type="text" value={input} onChange={(e) => setInput(formatCPF(e.target.value))}/>
+        <>
+        <h1 className="text-center bg-blue-900 rounded-t-md text-white text-2xl font-bold">VENDEDOR</h1>
+        <form className="grid grid-cols-2 gap-3 border-b-2 p-4 bg-white text-base">
+            <div className="nome grid w-[50%]">
+                <label className="font-bold mr-1">NOME:</label>
+                <input className="border rounded-md w-auto pl-2" type="text" placeholder="Nome" />
+            </div>
+            <div className="grid w-[50%]">
+                <label className="font-bold mr-1">CPFº</label>
+                <input className="border rounded-md w-auto pl-2" placeholder="CPF" type="text" value={input} onChange={(e) => setInput(formatCPF(e.target.value))}/>
+            </div>
+            <div className="grid w-[50%]">
+                <label className="font-bold mr-1">MOTIVO VENDA</label>
+                <select className="border rounded-md pl-1 w-auto">
+                    <option value='0'>Selecionar</option>
+                    <option value='1'>VP</option>
+                    <option value='2'>Prospect</option>
+                    <option value='3'>Indic</option>
+                </select>
+            </div>
+            <div className="grid w-[50%]">
+                <label className="font-bold mr-1">DATA VENDA</label>
+                <input className="border rounded-md w-auto pl-1" type="date"/>
+            </div>
+            <div className="grid w-[50%]">
+                <label className="font-bold mr-1">DATA ENVIO DO CONTRATO</label>
+                <input className="border rounded-md w-auto pl-1" type="date"/>
+            </div>
         </form>
+        </>
     )
 }
