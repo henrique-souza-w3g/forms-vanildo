@@ -1,9 +1,14 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { formatCNPJ } from "../Format/Format";
 
-export default function() {
-    const [empresa, setEmpresa] = useState('');
+interface EmpresaProps {
+    setInputsEmpresa: (inputs: any) => void;
+    setCompleteEmpresa: (complete: boolean) => void;
+}
+
+export default function({ setInputsEmpresa, setCompleteEmpresa }: EmpresaProps) {
     const [cnpj, setCnpj] = useState('');
     const [vidas, setVidas] = useState('')
     const [vigencia, setVigencia] = useState('')
@@ -31,17 +36,38 @@ export default function() {
     const [cepCorrespondencia, setCepCorrespondencia] = useState('')
     const [bairroCorrespondencia, setBairroCorrespondencia] = useState('')
     const [cidadeCorrespondencia, setCidadeCorrespondencia] = useState('')
+
+    useEffect(() => {
+            setInputsEmpresa([cnpj, vidas, vigencia, razaoSocial, endereco, numeroCasa, bairro, complemento, cidade, cep, email, telComercial,
+                telResidencial, celular, numeroBanco, banco, agencia, conta, responsavel, cargo, telefoneResponsavel, enderecoCorrespondencia,
+                numeroCorrespondencia, complementoCorrespondencia, cepCorrespondencia, bairroCorrespondencia, cidadeCorrespondencia])
+        }, [cnpj, vidas, vigencia, razaoSocial, endereco, numeroCasa, bairro, complemento, cidade, cep, email, telComercial,
+            telResidencial, celular, numeroBanco, banco, agencia, conta, responsavel, cargo, telefoneResponsavel, enderecoCorrespondencia,
+            numeroCorrespondencia, complementoCorrespondencia, cepCorrespondencia, bairroCorrespondencia, cidadeCorrespondencia])
+
+    useEffect(() => {
+        if (cnpj && vidas && vigencia && razaoSocial && endereco && numeroCasa && bairro && complemento && cidade && cep && email && telComercial &&
+            telResidencial && celular && numeroBanco && banco && agencia && conta && responsavel && cargo && telefoneResponsavel && enderecoCorrespondencia &&
+            numeroCorrespondencia && complementoCorrespondencia && cepCorrespondencia && bairroCorrespondencia && cidadeCorrespondencia) {
+            setCompleteEmpresa(true)
+        }
+        else {
+            setCompleteEmpresa(false)
+        }
+    }, [cnpj, vidas, vigencia, razaoSocial, endereco, numeroCasa, bairro, complemento, cidade, cep, email, telComercial,
+        telResidencial, celular, numeroBanco, banco, agencia, conta, responsavel, cargo, telefoneResponsavel, enderecoCorrespondencia,
+        numeroCorrespondencia, complementoCorrespondencia, cepCorrespondencia, bairroCorrespondencia, cidadeCorrespondencia])
     return (
         <>
             <p className="text-center bg-blue-900 text-white text-2xl font-bold p-2">EMPRESA</p>
-            <form className="grid grid-cols-3 gap-3 border-b-2 p-6 bg-white">
+            <form className="grid grid-cols-3 gap-3 p-6 bg-white">
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">CNPJ</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" placeholder="00.000.000/0000-00" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" placeholder="00.000.000/0000-00" type="text" value={cnpj} onChange={(e) => setCnpj(formatCNPJ(e.target.value))}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">VIDAS</label>
-                    <select className="border rounded-md pl-2 w-auto">
+                    <select className="border rounded-md pl-2 w-auto" value={vidas} onChange={(e) => setVidas(e.target.value)}>
                         <option value="0">Selecionar</option>
                         <option value="1">2 a 29 vidas</option>
                         <option value="2">30 a 99 vidas</option>
@@ -49,106 +75,106 @@ export default function() {
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">VIGÊNCIA</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="date"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="date" value={vigencia} onChange={(e) => setVigencia(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">RAZÃO SOCIAL</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" placeholder="Nome Empresa LTDA" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" placeholder="Nome Empresa LTDA" type="text" value={razaoSocial} onChange={(e) => setRazaoSocial(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">ENDEREÇO CNPJ</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">Nº</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={numeroCasa} onChange={(e) => setNumeroCasa(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">COMPLEMENTO</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={complemento} onChange={(e) => setComplemento(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">CEP</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={cep} onChange={(e) => setCep(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">BAIRRO</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={bairro} onChange={(e) => setBairro(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">CIDADE</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={cidade} onChange={(e) => setCidade(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">EMAIL</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="email"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </div>
                 <br />
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">TEL. COMERCIAL</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="tel"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="tel"  value={telComercial} onChange={(e) => setTelComercial(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">TEL. RESIDENCIAL</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="tel"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="tel" value={telResidencial} onChange={(e) => setTelResidencial(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">CELULAR</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="tel"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="tel" value={celular} onChange={(e) => setCelular(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">Nº BANCO</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={numeroBanco} onChange={(e) => setNumeroBanco(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">BANCO</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={banco} onChange={(e) => setBanco(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">AGÊNCIA</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={agencia} onChange={(e) => setAgencia(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">Nº CONTA</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={numeroBanco} onChange={(e) => setNumeroBanco(e.target.value)}/>
                 </div>
                 <div><p className="hidden"></p></div>
                 <div><p className="hidden"></p></div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">CONTATO/RESPOSÁVEL</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={responsavel} onChange={(e) => setResponsavel(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">CARGO</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={cargo} onChange={(e) => setCargo(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">TEL.</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="tel"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="tel" value={telefoneResponsavel} onChange={(e) => setTelefoneResponsavel(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">ENDEREÇO CORRESPONDÊNCIA</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={enderecoCorrespondencia} onChange={(e) => setEnderecoCorrespondencia(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">Nº</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={numeroCorrespondencia} onChange={(e) => setNumeroCorrespondencia(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">COMPLEMENTO</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={complementoCorrespondencia} onChange={(e) => setComplementoCorrespondencia(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">CEP</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={cepCorrespondencia} onChange={(e) => setCepCorrespondencia(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">BAIRRO</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={bairroCorrespondencia} onChange={(e) => setBairroCorrespondencia(e.target.value)}/>
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">CIDADE</label>
-                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text"/>
+                    <input className="border rounded-md w-auto h-[1.7em] pl-2" type="text" value={cidadeCorrespondencia} onChange={(e) => setCidadeCorrespondencia(e.target.value)}/>
                 </div>
             </form>
         </>

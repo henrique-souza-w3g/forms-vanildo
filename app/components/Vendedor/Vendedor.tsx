@@ -1,6 +1,7 @@
 'use client'
 
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
+import { formatCPF } from "../Format/Format"
 
 
 
@@ -10,40 +11,39 @@ export default function Vendedor({ setInputsVendedor, setCompleteVendedor }: { s
     const [motivoVenda, setMotivoVenda] = useState('')
     const [dtVenda, setDtVenda] = useState('')
     const [dtEnvio, setDtEnvio] = useState('')
+    const [emailVendedor, setEmailVendedor] = useState('')
 
     useEffect(() => {
         setInputsVendedor({
-            nome, cpf, motivoVenda, dtVenda, dtEnvio
+            nome, cpf, motivoVenda, dtVenda, dtEnvio, emailVendedor
         })
-    }, [nome, cpf, motivoVenda, dtVenda, dtEnvio, setInputsVendedor])
+    }, [nome, cpf, motivoVenda, dtVenda, dtEnvio, emailVendedor, setInputsVendedor])
 
     useEffect(() => {
-        if (nome && cpf && motivoVenda && dtVenda && dtEnvio) {
+        if (nome && cpf && motivoVenda && dtVenda && dtEnvio && emailVendedor) {
             setCompleteVendedor(true)
         }
         else {
             setCompleteVendedor(false)
         }
-    }, [nome, cpf, motivoVenda, dtVenda, dtEnvio, setCompleteVendedor])
-    const formatCPF = (value: string) => {
-        value = value.replace(/\D/g, ""); // Remove tudo que não é número
-        value = value.replace(/^(\d{3})(\d)/, "$1.$2");
-        value = value.replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
-        value = value.replace(/\.(\d{3})(\d)/, ".$1-$2");
-        return value.substring(0, 14); // Garante que não passe do limite
-    };
+    }, [nome, cpf, motivoVenda, dtVenda, dtEnvio, emailVendedor, setCompleteVendedor])
+
     
     return (
         <>
         <p className="text-center bg-blue-900 rounded-t-md text-white text-2xl font-bold p-2">VENDEDOR</p>
-        <form className="grid grid-cols-2 gap-3 border-b-2 p-6 bg-white text-base">
+        <form className="grid grid-cols-2 gap-3 p-6 bg-white text-base">
             <div className="nome grid w-[50%]">
-                <label className="font-bold mr-1">NOME:</label>
+                <label className="font-bold mr-1">NOME</label>
                 <input name="input-nome-vendedor" className="border rounded-md w-auto pl-2" type="text" placeholder="Nome Completo" value={nome} onChange={(e) => setNome(e.target.value)}/>
             </div>
             <div className="grid w-[50%]">
                 <label className="font-bold mr-1">CPFº</label>
                 <input name="input-cpf-vendedor" className="border rounded-md w-auto pl-2" placeholder="000.000.000-00" type="text" value={cpf} onChange={(e) => setCpf(formatCPF(e.target.value))}/>
+            </div>
+            <div className="grid w-[50%]">
+                <label className="font-bold mr-1">EMAIL VENDEDOR</label>
+                <input name="input-emailVendedor-vendedor" className="border rounded-md w-auto pl-2" type="emailVendedor" value={emailVendedor} onChange={(e) => setEmailVendedor(e.target.value)}/>
             </div>
             <div className="grid w-[50%]">
                 <label className="font-bold mr-1">MOTIVO VENDA</label>

@@ -1,8 +1,13 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-export default function PlanoEscolhido() {
+interface PlanoProps {
+    setInputsPlano: (inputs: any) => void;
+    setCompletePlano: (complete: boolean) => void;
+}
+
+export default function PlanoEscolhido({ setInputsPlano, setCompletePlano }: PlanoProps) {
     const [valorPlano, setValorPlano] = useState('')
     const [valorTaxa, setValorTaxa] = useState('')
     const [valorParcela, setValorParcela] = useState('')
@@ -11,10 +16,22 @@ export default function PlanoEscolhido() {
     const [acomodacao, setAcomodacao] = useState('')
     const [pgtoParcela, setPgtoParcela] = useState('')
 
+    useEffect(() => {
+        setInputsPlano({
+            valorPlano, valorTaxa, valorParcela, operadora, plano, acomodacao, pgtoParcela
+        })
+    }, [valorPlano, valorTaxa, valorParcela, operadora, plano, acomodacao, pgtoParcela])
+
+    useEffect(() => {
+        if (valorPlano && valorTaxa && valorParcela && operadora && plano && acomodacao && pgtoParcela) {
+            setCompletePlano(true)
+        }
+    })
+
     return(
         <>
             <p className="text-center bg-blue-900 text-white text-2xl font-bold p-2">PLANO</p>
-            <form className="grid grid-cols-3 gap-3 border-b-2 p-6 bg-white">
+            <form className="grid grid-cols-3 gap-3 p-6 bg-white">
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">VALOR DO PLANO</label>
                     <input name="input-valor-plano" className="border rounded-md pl-2 w-auto h-[1.7em]" type="text" value={valorPlano} onChange={(e) => setValorPlano(e.target.value)} />
