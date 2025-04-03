@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react"
+import { formatValor } from "../Format/Format";
 
 interface PlanoProps {
     setInputsPlano: (inputs: any) => void;
@@ -34,15 +35,15 @@ export default function PlanoEscolhido({ setInputsPlano, setCompletePlano }: Pla
             <form className="grid grid-cols-3 gap-3 p-6 bg-white">
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">VALOR DO PLANO</label>
-                    <input name="input-valor-plano" className="border rounded-md pl-2 w-auto h-[1.7em]" type="text" value={valorPlano} onChange={(e) => setValorPlano(e.target.value)} />
+                    <input name="input-valor-plano" className="border rounded-md pl-2 w-auto h-[1.7em]" type="text" value={valorPlano} onChange={(e) => setValorPlano(formatValor(e.target.value))} />
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">VALOR DA TAXA</label>
-                    <input name="input-valor-taxa" className="border rounded-md pl-2 w-auto h-[1.7em]" type="text" value={valorTaxa} onChange={(e) => setValorTaxa(e.target.value)} />
+                    <input name="input-valor-taxa" className="border rounded-md pl-2 w-auto h-[1.7em]" type="text" value={valorTaxa} onChange={(e) => setValorTaxa(formatValor(e.target.value))} />
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">VALOR DA 1º PARCELA</label>
-                    <input name="input-valor-parcela" className="border rounded-md pl-2 w-auto h-[1.7em]" type="text" value={valorParcela} onChange={(e) => setValorParcela(e.target.value)} />
+                    <input name="input-valor-parcela" className="border rounded-md pl-2 w-auto h-[1.7em]" type="text" value={valorParcela} onChange={(e) => setValorParcela(formatValor(e.target.value))} />
                 </div>
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">OPERADORA</label>
@@ -55,6 +56,7 @@ export default function PlanoEscolhido({ setInputsPlano, setCompletePlano }: Pla
                 <div className="grid w-[70%]">
                     <label className="font-bold mr-2">ACOMODAÇÃO</label>
                     <select name="select-acomodacao" className="border rounded-md pl-2 w-auto h-[1.7em]" value={acomodacao} onChange={(e) => setAcomodacao(e.target.value)}>
+                        <option value="">Selecione</option>
                         <option value='enfermaria'>Enfermaria</option>
                         <option value='apartamento'>Apartamento</option>
                     </select>

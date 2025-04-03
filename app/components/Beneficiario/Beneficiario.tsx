@@ -1,5 +1,6 @@
 'use client'
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { formatCelular, formatCEP, formatCPF, formatRG, formatTelefone } from "../Format/Format";
 
 interface BeneficiarioProps {
     children: React.ReactNode;
@@ -30,6 +31,30 @@ export default function Beneficiario({ children, setCompleteBeneficiario, setInp
     const [celular, setCelular] = useState('')
     const [infoPessoais, setInfoPessoais] = useState('')
 
+    useEffect(() => {
+        setInputsBeneficiario({
+            nome, cpf, rg, dataNascimento, estadoCivil, sus, 
+            declaracao, nomeMae, altura, peso, doenca, endereco,
+            numero, bairro, complemento, cidade, cep, 
+            telResidencial, telComercial, celular, infoPessoais
+        })
+    }, [nome, cpf, rg, dataNascimento, estadoCivil, sus, 
+        declaracao, nomeMae, altura, peso, doenca, endereco,
+        numero, bairro, complemento, cidade, cep, 
+        telResidencial, telComercial, celular, infoPessoais, setInputsBeneficiario])
+
+    useEffect(() => {
+        if (nome && cpf && rg && dataNascimento && estadoCivil && sus && declaracao && nomeMae && altura && 
+            peso && doenca && endereco && numero && bairro && cidade && cep && telResidencial && telComercial && celular) {
+            setCompleteBeneficiario(true)
+        }
+        else {
+            setCompleteBeneficiario(false)
+        }
+    }, [nome, cpf, rg, dataNascimento, estadoCivil, sus, 
+        declaracao, nomeMae, altura, peso, doenca, endereco,
+        numero, bairro, complemento, cidade, cep, 
+        telResidencial, telComercial, celular, infoPessoais, setCompleteBeneficiario])
 
     return (
         <>
@@ -41,11 +66,11 @@ export default function Beneficiario({ children, setCompleteBeneficiario, setInp
             </div>
             <div className="grid w-[70%]">
                 <label className="font-bold mr-2">CPF</label>
-                <input className="border rounded-md pl-2 w-auto h-[1.7em] h-[1.7em]" type="text" value={cpf} onChange={(e) => setCPF(e.target.value)}/>
+                <input className="border rounded-md pl-2 w-auto h-[1.7em] h-[1.7em]" type="text" value={cpf} onChange={(e) => setCPF(formatCPF(e.target.value))}/>
             </div>
             <div className="grid w-[70%]">
                 <label className="font-bold mr-2">RG</label>
-                <input className="border rounded-md pl-2 w-auto h-[1.7em] h-[1.7em]" type="text" value={rg} onChange={(e) => setRg(e.target.value)}/>
+                <input className="border rounded-md pl-2 w-auto h-[1.7em] h-[1.7em]" type="text" value={rg} onChange={(e) => setRg(formatRG(e.target.value))}/>
             </div>
             <div className="grid w-[70%]">
                 <label className="font-bold mr-2">DATA NASCIMENTO</label>
@@ -111,19 +136,19 @@ export default function Beneficiario({ children, setCompleteBeneficiario, setInp
             </div>
             <div className="grid w-[70%]">
                 <label className="font-bold">CEP</label>
-                <input className="border rounded-md pl-2 w-auto h-[1.7em]" type="text" value={cep} onChange={(e) => setCep(e.target.value)}/>
+                <input className="border rounded-md pl-2 w-auto h-[1.7em]" type="text" value={cep} onChange={(e) => setCep(formatCEP(e.target.value))}/>
             </div>
             <div className="grid w-[70%]">
                 <label className="font-bold">TEL. RESIDENCIAL</label>
-                <input className="border rounded-md pl-2 w-auto h-[1.7em]" type="tel" value={telResidencial} onChange={(e) => setTelResidencial(e.target.value)}/>
+                <input className="border rounded-md pl-2 w-auto h-[1.7em]" type="tel" value={telResidencial} onChange={(e) => setTelResidencial(formatTelefone(e.target.value))}/>
             </div>
             <div className="grid w-[70%]">
                 <label className="font-bold">TEL. COMERCIAL</label>
-                <input className="border rounded-md pl-2 w-auto h-[1.7em]" type="tel" value={telComercial} onChange={(e) => setTelComercial(e.target.value)}/>
+                <input className="border rounded-md pl-2 w-auto h-[1.7em]" type="tel" value={telComercial} onChange={(e) => setTelComercial(formatCelular(e.target.value))}/>
             </div>
             <div className="grid w-[70%]">
                 <label className="font-bold">CELULAR</label>
-                <input className="border rounded-md pl-2 w-auto h-[1.7em]" type="tel" value={celular} onChange={(e) => setCelular(e.target.value)}/>
+                <input className="border rounded-md pl-2 w-auto h-[1.7em]" type="tel" value={celular} onChange={(e) => setCelular(formatCelular(e.target.value))}/>
             </div>
             <div className="grid w-[70%]">
                 <label className="font-bold">INFORMAÇÕES ADICIONAIS</label>

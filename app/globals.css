@@ -56,7 +56,28 @@ body {
   transition: 0.3ms;
 }
 
+.enviar {
+  width: 30%;
+  justify-content: center;
+}
+
 .enviar:hover {
   transform: scale(1.02);
   transition: 0.3ms;
+  .check {
+    transform: scale(1.1);
+  }
+}
+
+.refazer{
+  width: 30%;
+  justify-content: center;
+}
+.refazer:hover {
+  color: white;
+  transform: scale(1.02);
+  .restart{
+    transform: rotate(-360deg);
+    transition: 0.5s;
+  }
 }
