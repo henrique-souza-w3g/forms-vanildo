@@ -17,15 +17,157 @@ const montserrat = Montserrat({
   variable: '--font-montserrat',
 })
 
+type Vendedor = {
+  nome: string;
+  cpf: string;
+  emailVendedor: string;
+  motivoVenda: string;
+  dtVenda: string;
+  dtEnvio: string;
+};
+
+type Empresa = {
+  cnpj: string;
+  vidas: string;
+  vigencia: string;
+  razaoSocial: string;
+  endereco: string;
+  numeroCasa: string;
+  complemento: string;
+  cep: string;
+  bairro: string;
+  cidade: string;
+  email: string;
+  telComercial: string;
+  telResidencial: string;
+  celular: string;
+  banco: string;
+  numeroBanco: string;
+  agencia: string;
+  conta: string;
+  responsavel: string;
+  cargo: string;
+  telefoneResponsavel: string;
+  enderecoCorrespondencia: string;
+  numeroCorrespondencia: string;
+  complementoCorrespondencia: string;
+  cepCorrespondencia: string;
+  bairroCorrespondencia: string;
+  cidadeCorrespondencia: string;
+};
+
+type Plano = {
+  operadora: string;
+  plano: string;
+  acomodacao: string;
+  valorPlano: string;
+  valorTaxa: string;
+  valorParcela: string;
+  pgtoParcela: string;
+};
+
+type Beneficiario = {
+  nome: string;
+  cpf: string;
+  rg: string;
+  dataNascimento: string;
+  estadoCivil: string;
+  sus: string;
+  declaracao: string;
+  nomeMae: string;
+  altura: string;
+  peso: string;
+  doenca: string;
+  endereco: string;
+  numero: string;
+  complemento: string;
+  cep: string;
+  bairro: string;
+  cidade: string;
+  telComercial: string;
+  telResidencial: string;
+  celular: string;
+  infoPessoais: string;
+};
+
+
 export default function Home() {
   const [dependente, setDependente] = useState(false)
-  const [inputsVendedor, setInputsVendedor] = useState({})
-  const [completeVendedor, setCompleteVendedor] = useState(false)
-  const [inputsEmpresa, setInputsEmpresa] = useState({});
+  const [inputsVendedor, setInputsVendedor] = useState<Vendedor>({
+    nome: '',
+    cpf: '',
+    emailVendedor: '',
+    motivoVenda: '',
+    dtVenda: '',
+    dtEnvio: '',
+  });
+  
+  const [inputsEmpresa, setInputsEmpresa] = useState<Empresa>({
+    cnpj: '',
+    vidas: '',
+    vigencia: '',
+    razaoSocial: '',
+    endereco: '',
+    numeroCasa: '',
+    complemento: '',
+    cep: '',
+    bairro: '',
+    cidade: '',
+    email: '',
+    telComercial: '',
+    telResidencial: '',
+    celular: '',
+    banco: '',
+    numeroBanco: '',
+    agencia: '',
+    conta: '',
+    responsavel: '',
+    cargo: '',
+    telefoneResponsavel: '',
+    enderecoCorrespondencia: '',
+    numeroCorrespondencia: '',
+    complementoCorrespondencia: '',
+    cepCorrespondencia: '',
+    bairroCorrespondencia: '',
+    cidadeCorrespondencia: '',
+  });
+  
+  const [inputsPlano, setInputsPlano] = useState<Plano>({
+    operadora: '',
+    plano: '',
+    acomodacao: '',
+    valorPlano: '',
+    valorTaxa: '',
+    valorParcela: '',
+    pgtoParcela: '',
+  });
+  
+  const [inputsBeneficiario, setInputsBeneficiario] = useState<Beneficiario>({
+    nome: '',
+    cpf: '',
+    rg: '',
+    dataNascimento: '',
+    estadoCivil: '',
+    sus: '',
+    declaracao: '',
+    nomeMae: '',
+    altura: '',
+    peso: '',
+    doenca: '',
+    endereco: '',
+    numero: '',
+    complemento: '',
+    cep: '',
+    bairro: '',
+    cidade: '',
+    telComercial: '',
+    telResidencial: '',
+    celular: '',
+    infoPessoais: '',
+  });
+    const [completeVendedor, setCompleteVendedor] = useState(false)
   const [completeEmpresa, setCompleteEmpresa] = useState(false);
-  const [inputsPlano, setInputsPlano] = useState({});
   const [completePlano, setCompletePlano] = useState(false);
-  const [inputsBeneficiario, setInputsBeneficiario] = useState({});
   const [completeBeneficiario, setCompleteBeneficiario] = useState(false);
   const [emailDestino, setEmailDestino] = useState('')
   const [emailCopia, setEmailCopia] = useState('')
