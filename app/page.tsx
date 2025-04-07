@@ -90,9 +90,56 @@ type Beneficiario = {
   infoPessoais: string;
 };
 
+type Dependente = {
+  nome: string;
+  cpf: string;
+  rg: string;
+  dataNascimento: string;
+  estadoCivil: string;
+  sus: string;
+  declaracao: string;
+  nomeMae: string;
+  altura: string;
+  peso: string;
+  doenca: string;
+  endereco: string;
+  numero: string;
+  complemento: string;
+  cep: string;
+  bairro: string;
+  cidade: string;
+  telComercial: string;
+  telResidencial: string;
+  celular: string;
+  infoPessoais: string;
+}
 
 export default function Home() {
   const [dependente, setDependente] = useState(false)
+  const [dependentes, setDependentes] = useState(0)
+  const [inputsDependentes, setInputsDependentes] = useState<Dependente>({
+    nome: '',
+    cpf: '',
+    rg: '',
+    dataNascimento: '',
+    estadoCivil: '',
+    sus: '',
+    declaracao: '',
+    nomeMae: '',
+    altura: '',
+    peso: '',
+    doenca: '',
+    endereco: '',
+    numero: '',
+    complemento: '',
+    cep: '',
+    bairro: '',
+    cidade: '',
+    telComercial: '',
+    telResidencial: '',
+    celular: '',
+    infoPessoais: '',
+  })
   const [inputsVendedor, setInputsVendedor] = useState<Vendedor>({
     nome: '',
     cpf: '',
@@ -165,7 +212,10 @@ export default function Home() {
     celular: '',
     infoPessoais: '',
   });
-    const [completeVendedor, setCompleteVendedor] = useState(false)
+
+
+
+  const [completeVendedor, setCompleteVendedor] = useState(false)
   const [completeEmpresa, setCompleteEmpresa] = useState(false);
   const [completePlano, setCompletePlano] = useState(false);
   const [completeBeneficiario, setCompleteBeneficiario] = useState(false);
@@ -177,7 +227,8 @@ export default function Home() {
     vendedor: {},
     empresa: {},
     plano: {},
-    beneficiario: {}
+    beneficiario: {},
+    dependentes: {}
   });
   useEffect(() => {
     setInputs({
@@ -185,9 +236,10 @@ export default function Home() {
       vendedor: inputsVendedor,
       empresa: inputsEmpresa,
       plano: inputsPlano,
-      beneficiario: inputsBeneficiario
+      beneficiario: inputsBeneficiario,
+      dependentes: inputsDependentes
     });
-  }, [dependente, inputsVendedor, inputsEmpresa, inputsPlano, inputsBeneficiario]);
+  }, [dependente, inputsVendedor, inputsEmpresa, inputsPlano, inputsBeneficiario, inputsDependentes]);
 
   useEffect(() => {
     if (refazer === true) {
@@ -196,18 +248,48 @@ export default function Home() {
       vendedor: {},
       empresa: {},
       plano: {},
-      beneficiario: {}
+      beneficiario: {},
+      dependentes: {}
       })
       setRefazer(false)
     }
   }, [refazer])
+
+  const dependentesTexto = Array.isArray(inputsDependentes)
+  ? inputsDependentes.map((dependente, index) => (
+      `
+      - Dependente ${index + 1}:
+      - Nome: ${dependente.nome || "Não informado"}
+      - CPF: ${dependente.cpf || "Não informado"}
+      - RG: ${dependente.rg || "Não informado"}
+      - Data de Nascimento: ${dependente.dataNascimento || "Não informado"}
+      - Estado Civil: ${dependente.estadoCivil || "Não informado"}
+      - Nº Cartão SUS: ${dependente.sus || "Não informado"}
+      - Declaração de Nascido Vivo: ${dependente.declaracao || "Não informado"}
+      - Nome da Mãe: ${dependente.nomeMae || "Não informado"}
+      - Altura: ${dependente.altura || "Não informado"}
+      - Peso: ${dependente.peso || "Não informado"}
+      - Possui Doença Pré-Existente: ${dependente.doenca || "Não informado"}
+      - Endereço: ${dependente.endereco || "Não informado"}
+      - Nº: ${dependente.numero || "Não informado"}
+      - Complemento: ${dependente.complemento || "Não informado"}
+      - CEP: ${dependente.cep || "Não informado"}
+      - Bairro: ${dependente.bairro || "Não informado"}
+      - Cidade: ${dependente.cidade || "Não informado"}
+      - Telefone Comercial: ${dependente.telComercial || "Não informado"}
+      - Telefone Residencial: ${dependente.telResidencial || "Não informado"}
+      - Celular: ${dependente.celular || "Não informado"}
+      - Informações Pessoais: ${dependente.infoPessoais || "Não informado"}
+      `
+    )).join('\n')
+  : "Nenhum dependente informado.";
+
 
   const handleClick = () => {
     if (!emailDestino || !inputsVendedor.emailVendedor) {
       alert('Por favor, insira o e-mail do destinatário')
       return;
     }
-
     const emailBody = `
     *Dados do Vendedor*:
     - Nome: ${inputsVendedor.nome}
@@ -277,20 +359,45 @@ export default function Home() {
     - Telefone Residencial: ${inputsBeneficiario.telResidencial || "Não informado"}
     - Celular: ${inputsBeneficiario.celular || "Não informado"}
     - Informações Pessoais: ${inputsBeneficiario.infoPessoais || "Não informado"}
-  `;
+
+    ${dependente ? `*Dependetes*: 
+      - Nome: ${inputsDependentes.nome || "Não informado"} 
+      - CPF: ${inputsDependentes.cpf || "Não informado"}
+      - RG: ${inputsDependentes.rg || "Não informado"}
+      - Data de Nascimento: ${inputsDependentes.dataNascimento || "Não informado"}
+      - Estado Civil: ${inputsDependentes.estadoCivil || "Não informado"}
+      - Nº Cartão SUS: ${inputsDependentes.sus || "Não informado"}
+      - Declaração de Nascido Vivo: ${inputsDependentes.declaracao || "Não informado"}
+      - Nome da Mãe: ${inputsDependentes.nomeMae || "Não informado"}
+      - Altura: ${inputsDependentes.altura || "Não informado"}
+      - Peso: ${inputsDependentes.peso || "Não informado"}
+      - Possui Doença Pré-Existente: ${inputsDependentes.doenca || "Não informado"}
+      - Endereço: ${inputsDependentes.endereco || "Não informado"}
+      - Nº: ${inputsDependentes.numero || "Não informado"}
+      - Complemento: ${inputsDependentes.complemento || "Não informado"}
+      - CEP: ${inputsDependentes.cep || "Não informado"}
+      - Bairro: ${inputsDependentes.bairro || "Não informado"}
+      - Cidade: ${inputsDependentes.cidade || "Não informado"}
+      - Telefone Comercial: ${inputsDependentes.telComercial || "Não informado"}
+      - Telefone Residencial: ${inputsDependentes.telResidencial || "Não informado"}
+      - Celular: ${inputsDependentes.celular || "Não informado"}
+      - Informações Pessoais: ${inputsDependentes.infoPessoais || "Não informado"}
+      `: ''}
+
+    `;
 
   const templateParams = {
-    from_email: inputsVendedor.emailVendedor,
+    from_email: 'henrique.souza@w3gconsultoria.com.br',
     from_name: 'W3G Consultoria',
     to_email: emailDestino,
-    reply_to: "henrique.souza@w3gconsultoria.com.br",
+    reply_to: inputsVendedor.emailVendedor,
     cc_to: emailCopia,
     name: inputsVendedor.nome,
     message: emailBody,
   };
 
   console.log("Enviando email com:", templateParams);
-  console.log('Inputs: ', inputsEmpresa)
+  console.log('Inputs: ', inputs)
 
   
     if (!completeVendedor || !completeEmpresa || !completePlano || !completeBeneficiario) {
@@ -324,6 +431,7 @@ export default function Home() {
           <Empresa setInputsEmpresa={setInputsEmpresa} setCompleteEmpresa={setCompleteEmpresa}/>
         </motion.div>
       )}
+
       {completeEmpresa && (
         <motion.div 
         key='plano'
@@ -331,20 +439,24 @@ export default function Home() {
           <PlanoEscolhido setInputsPlano={setInputsPlano} setCompletePlano={setCompletePlano}/>
         </motion.div>
       )}
+
       {completePlano && (
         <motion.div>
           <Beneficiario setInputsBeneficiario={setInputsBeneficiario} setCompleteBeneficiario={setCompleteBeneficiario}>TITULAR</Beneficiario>
         {dependente && (
-          <motion.div
-          key='dependente'
-          animate={{ opacity: [0, 1], y: [-20, 0]}}>
-            <Beneficiario setInputsBeneficiario={setInputsBeneficiario} setCompleteBeneficiario={setCompleteBeneficiario}>DEPENDENTE</Beneficiario>
+          Array.from({ length: dependentes }).map((_, index) => (
+            <motion.div
+          key={index}
+          animate={{ opacity: [0, 1], y: [100, 10 ,0] }}>
+            <Beneficiario key={`dependente-${index}`} setInputsBeneficiario={setInputsDependentes} setCompleteBeneficiario={setCompleteBeneficiario}>DEPENDENTE</Beneficiario>
           </motion.div>
+          ))
         )}
-      <div className="flex justify-evenly bg-gray-300">
-        <Button valid="adicionar" onClick={() => setDependente(true)}>Adicionar Dependente<CirclePlus className="ml-2" /></Button>
-        {dependente ? <Button valid="excluir" onClick={() => setDependente(false)}>Excluir Dependente<CirclePlus className="ml-2 rotate-45 text-red" /></Button> : null }
-      </div>
+        <div className="flex justify-start px-4 py-1 rounded-b-md bg-gray-300 gap-2">
+          {dependente ? null : <input className="border rounded-md w-auto m-2 p-2 bg-blue-900 text-white" type="number" value={dependentes} onChange={(e) => setDependentes(e.target.valueAsNumber)} />}
+          {dependente ? null : <Button valid="adicionar" onClick={() => setDependente(true)}>Adicionar Dependentes<CirclePlus className="ml-2" /></Button>}
+          {dependente ? <Button valid="excluir" onClick={() => setDependente(false)}>Excluir Dependente<CirclePlus className="ml-2 rotate-45 text-red" /></Button> : null }
+          </div>
         </motion.div>
       )}
         <div className="flex flex-col justify-center align-middle h-[100%] bg-blue-900 py-2 px-5 w-auto rounded-md mt-2 text-white gap-5">
@@ -357,15 +469,12 @@ export default function Home() {
             <input className="border rounded-md w-[70%] h-[1.7em] pl-2 mr-2 text-white" type="email" name="email-copia" placeholder="Insira email aqui" value={emailCopia} onChange={e => setEmailCopia(e.target.value)} />
           </div>
         </div>
-      {completeBeneficiario && (
         <motion.div className="flex justify-center w-[100%] gap-2"
         key='enviar-refazer'
         animate={{ opacity: [0, 1], y: [10, 0] }}>
         <Button valid="enviar" onClick={handleClick}>ENVIAR<CircleCheck className="check ml-2"/></Button>
         <Button valid="refazer" onClick={() => setRefazer(true)}>NOVO FORMULÁRIO<RotateCcw className="restart ml-2"/></Button>
         </motion.div>
-      )}  
-      
     </div>
     </AnimatePresence>
   );
