@@ -56,3 +56,9 @@ export const formatValor = (value: string) => {
     value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); // Coloca o ponto
     return `R$ ${value}` // Garante que não passe do limite
 }
+
+export const formatData = (value: string) => {
+    value = value.replace(/\D/g, ""); // Remove tudo que não é número
+    value = value.replace(/^(\d{2})(\d{2})(\d)/g, "$1/$2/$3");
+    return value.substring(0,10) // Adiciona a barra
+}

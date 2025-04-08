@@ -8,9 +8,11 @@ import PlanoEscolhido from "./components/PlanoEscolhido/PlanoEscolhido";
 import Beneficiario from "./components/Beneficiario/Beneficiario";
 import { useEffect, useState } from "react";
 import { Button } from "./components/Button/Button";
-import { AnimatePresence, easeInOut, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CircleCheck, CirclePlus, RotateCcw } from "lucide-react";
-import { error } from "console";
+import { jsPDF } from "jspdf";
+import { formatData } from "./components/Format/Format";
+
 const montserrat = Montserrat({
   weight: ['400', '700'],
   subsets: ['latin'],
@@ -90,56 +92,10 @@ type Beneficiario = {
   infoPessoais: string;
 };
 
-type Dependente = {
-  nome: string;
-  cpf: string;
-  rg: string;
-  dataNascimento: string;
-  estadoCivil: string;
-  sus: string;
-  declaracao: string;
-  nomeMae: string;
-  altura: string;
-  peso: string;
-  doenca: string;
-  endereco: string;
-  numero: string;
-  complemento: string;
-  cep: string;
-  bairro: string;
-  cidade: string;
-  telComercial: string;
-  telResidencial: string;
-  celular: string;
-  infoPessoais: string;
-}
-
 export default function Home() {
   const [dependente, setDependente] = useState(false)
   const [dependentes, setDependentes] = useState(0)
-  const [inputsDependentes, setInputsDependentes] = useState<Dependente>({
-    nome: '',
-    cpf: '',
-    rg: '',
-    dataNascimento: '',
-    estadoCivil: '',
-    sus: '',
-    declaracao: '',
-    nomeMae: '',
-    altura: '',
-    peso: '',
-    doenca: '',
-    endereco: '',
-    numero: '',
-    complemento: '',
-    cep: '',
-    bairro: '',
-    cidade: '',
-    telComercial: '',
-    telResidencial: '',
-    celular: '',
-    infoPessoais: '',
-  })
+  const [inputsDependentes, setInputsDependentes] = useState<Beneficiario[]>([])
   const [inputsVendedor, setInputsVendedor] = useState<Vendedor>({
     nome: '',
     cpf: '',
@@ -241,7 +197,7 @@ export default function Home() {
     });
   }, [dependente, inputsVendedor, inputsEmpresa, inputsPlano, inputsBeneficiario, inputsDependentes]);
 
-  useEffect(() => {
+  const handleRefazer = () => {
     if (refazer === true) {
       setInputs({
       dependente: false,
@@ -249,60 +205,39 @@ export default function Home() {
       empresa: {},
       plano: {},
       beneficiario: {},
-      dependentes: {}
+      dependentes: []
       })
       setRefazer(false)
     }
-  }, [refazer])
-
-  const dependentesTexto = Array.isArray(inputsDependentes)
-  ? inputsDependentes.map((dependente, index) => (
-      `
-      - Dependente ${index + 1}:
-      - Nome: ${dependente.nome || "Não informado"}
-      - CPF: ${dependente.cpf || "Não informado"}
-      - RG: ${dependente.rg || "Não informado"}
-      - Data de Nascimento: ${dependente.dataNascimento || "Não informado"}
-      - Estado Civil: ${dependente.estadoCivil || "Não informado"}
-      - Nº Cartão SUS: ${dependente.sus || "Não informado"}
-      - Declaração de Nascido Vivo: ${dependente.declaracao || "Não informado"}
-      - Nome da Mãe: ${dependente.nomeMae || "Não informado"}
-      - Altura: ${dependente.altura || "Não informado"}
-      - Peso: ${dependente.peso || "Não informado"}
-      - Possui Doença Pré-Existente: ${dependente.doenca || "Não informado"}
-      - Endereço: ${dependente.endereco || "Não informado"}
-      - Nº: ${dependente.numero || "Não informado"}
-      - Complemento: ${dependente.complemento || "Não informado"}
-      - CEP: ${dependente.cep || "Não informado"}
-      - Bairro: ${dependente.bairro || "Não informado"}
-      - Cidade: ${dependente.cidade || "Não informado"}
-      - Telefone Comercial: ${dependente.telComercial || "Não informado"}
-      - Telefone Residencial: ${dependente.telResidencial || "Não informado"}
-      - Celular: ${dependente.celular || "Não informado"}
-      - Informações Pessoais: ${dependente.infoPessoais || "Não informado"}
-      `
-    )).join('\n')
-  : "Nenhum dependente informado.";
-
+  }
+  
+  const atualizarDepdentes = (index: any, novoValor: Beneficiario) => {
+    setInputsDependentes((prev) => {
+      const novos = [...prev];
+      novos[index] = novoValor;
+      return novos;
+    })
+  }
 
   const handleClick = () => {
     if (!emailDestino || !inputsVendedor.emailVendedor) {
       alert('Por favor, insira o e-mail do destinatário')
       return;
     }
+    console.log(inputsDependentes)
     const emailBody = `
-    *Dados do Vendedor*:
+    --------- Dados do Vendedor ---------
     - Nome: ${inputsVendedor.nome}
     - CPF: ${inputsVendedor.cpf}
     - E-mail: ${inputsVendedor.emailVendedor}
     - Motivo da Venda: ${inputsVendedor.motivoVenda}
-    - Data da Venda: ${inputsVendedor.dtVenda}
-    - Data do Envio do Contrato: ${inputsVendedor.dtEnvio}
+    - Data da Venda: ${formatData(inputsVendedor.dtVenda)}
+    - Data do Envio do Contrato: ${formatData(inputsVendedor.dtEnvio)}
 
-    *Dados da Empresa*:
+    --------- Dados da Empresa ---------
     - CNPJ: ${inputsEmpresa.cnpj }
     - Vidas: ${inputsEmpresa.vidas }
-    - Vigência: ${inputsEmpresa.vigencia }
+    - Vigência: ${formatData(inputsEmpresa.vigencia) }
     - Razão Social: ${inputsEmpresa.razaoSocial }
     - Endereco: ${inputsEmpresa.endereco }
     - Nº: ${inputsEmpresa.numeroCasa }
@@ -328,20 +263,20 @@ export default function Home() {
     - Bairro da Correspondência: ${inputsEmpresa.bairroCorrespondencia }
     - Cidade da Correspondência: ${inputsEmpresa.cidadeCorrespondencia }
 
-    *Plano Escolhido*:
+    --------- Plano Escolhido ---------
     - Operadora: ${inputsPlano.operadora || "Não informado"}
     - Plano: ${inputsPlano.plano || "Não informado"}
     - Acomodação: R$ ${inputsPlano.acomodacao || "Não informado"}
     - Valor do Plano: R$ ${inputsPlano.valorPlano || "Não informado"}
     - Valor da Taxa: R$ ${inputsPlano.valorTaxa || "Não informado"}
     - Valor da 1º Parcela: R$ ${inputsPlano.valorParcela || "Não informado"}
-    - Pagamento da 1º Parcela: ${inputsPlano.pgtoParcela || "Não informado"}
+    - Pagamento da 1º Parcela: ${formatData(inputsPlano.pgtoParcela) || "Não informado"}
 
-    *Titular*:
+    --------- Titular ---------
     - Nome: ${inputsBeneficiario.nome || "Não informado"}
     - CPF: ${inputsBeneficiario.cpf || "Não informado"}
     - RG: ${inputsBeneficiario.rg || "Não informado"}
-    - Data de Nascimento: ${inputsBeneficiario.dataNascimento || "Não informado"}
+    - Data de Nascimento: ${formatData(inputsBeneficiario.dataNascimento) || "Não informado"}
     - Estado Civil: ${inputsBeneficiario.estadoCivil || "Não informado"}
     - Nº Cartão SUS: ${inputsBeneficiario.sus || "Não informado"}
     - Declaração de Nascido Vivo: ${inputsBeneficiario.declaracao || "Não informado"}
@@ -360,11 +295,12 @@ export default function Home() {
     - Celular: ${inputsBeneficiario.celular || "Não informado"}
     - Informações Pessoais: ${inputsBeneficiario.infoPessoais || "Não informado"}
 
-    ${dependente ? `*Dependetes*: 
-      - Nome: ${inputsDependentes.nome || "Não informado"} 
+    ${dependente && dependentes > 0 ? inputsDependentes.map((inputsDependentes, index) =>
+      `--------- Dependente ${index + 1} ---------
+      - Nome: ${inputsDependentes.nome || "Não informado"}
       - CPF: ${inputsDependentes.cpf || "Não informado"}
       - RG: ${inputsDependentes.rg || "Não informado"}
-      - Data de Nascimento: ${inputsDependentes.dataNascimento || "Não informado"}
+      - Data de Nascimento: ${formatData(inputsDependentes.dataNascimento) || "Não informado"}
       - Estado Civil: ${inputsDependentes.estadoCivil || "Não informado"}
       - Nº Cartão SUS: ${inputsDependentes.sus || "Não informado"}
       - Declaração de Nascido Vivo: ${inputsDependentes.declaracao || "Não informado"}
@@ -381,20 +317,50 @@ export default function Home() {
       - Telefone Comercial: ${inputsDependentes.telComercial || "Não informado"}
       - Telefone Residencial: ${inputsDependentes.telResidencial || "Não informado"}
       - Celular: ${inputsDependentes.celular || "Não informado"}
-      - Informações Pessoais: ${inputsDependentes.infoPessoais || "Não informado"}
-      `: ''}
+      - Informações Pessoais: ${inputsDependentes.infoPessoais || "Não informado"}\n`
+    ).join('\n') : ''}
 
     `;
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: [210, 297]
+    });
+    const lines = doc.splitTextToSize(emailBody, 180);
+    const pdfImg = "data:image/png;base64,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";
+    doc.addImage(pdfImg, 'PNG', 170, 15, 10, 10);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    let y = 10;
+
+    for (let i = 0; i < lines.length; i++) {
+      if (y + 7 > doc.internal.pageSize.height - 10) {
+        doc.addPage();
+        doc.addImage(pdfImg, 'PNG', 170, 15, 10, 10); // adiciona nova página
+        y = 10; // reseta Y
+      }
+      doc.text(lines[i], 10, y);
+      y += 7;
+    }
+
+    const pdfBase64 = doc.output('datauristring');
 
   const templateParams = {
-    from_email: 'henrique.souza@w3gconsultoria.com.br',
-    from_name: 'W3G Consultoria',
-    to_email: emailDestino,
-    reply_to: inputsVendedor.emailVendedor,
+    from_name: '4.0 Consultoria',
+    empresa_name: inputsEmpresa.razaoSocial,
+    reply_to: emailDestino,
+    to_email: inputsVendedor.emailVendedor,
     cc_to: emailCopia,
     name: inputsVendedor.nome,
     message: emailBody,
+    time: new Date().toLocaleString(),
+    file: pdfBase64,
   };
+
+  
 
   console.log("Enviando email com:", templateParams);
   console.log('Inputs: ', inputs)
@@ -406,10 +372,10 @@ export default function Home() {
     };
 
     emailjs.send(
-      'service_yq83gbb', // Service ID
-      'template_50psys2', // Template ID
+      'service_ee4xbqw', // Service ID
+      'template_b3h44af', // Template ID
       templateParams,
-      'XgLipPhJoM6lrrfHn' // User ID
+      'FqXs7MJHuqbGb01VE' // User ID
     ).then(response => {
       console.log("Email enviado!", response);
       alert("Email enviado com sucesso!");
@@ -448,7 +414,7 @@ export default function Home() {
             <motion.div
           key={index}
           animate={{ opacity: [0, 1], y: [100, 10 ,0] }}>
-            <Beneficiario key={`dependente-${index}`} setInputsBeneficiario={setInputsDependentes} setCompleteBeneficiario={setCompleteBeneficiario}>DEPENDENTE</Beneficiario>
+            <Beneficiario key={`dependente-${index}`} setInputsBeneficiario={(dados) => atualizarDepdentes(index, dados)} setCompleteBeneficiario={setCompleteBeneficiario}>DEPENDENTE</Beneficiario>
           </motion.div>
           ))
         )}
@@ -473,7 +439,7 @@ export default function Home() {
         key='enviar-refazer'
         animate={{ opacity: [0, 1], y: [10, 0] }}>
         <Button valid="enviar" onClick={handleClick}>ENVIAR<CircleCheck className="check ml-2"/></Button>
-        <Button valid="refazer" onClick={() => setRefazer(true)}>NOVO FORMULÁRIO<RotateCcw className="restart ml-2"/></Button>
+        <Button valid="refazer" onClick={handleRefazer}>NOVO FORMULÁRIO<RotateCcw className="restart ml-2"/></Button>
         </motion.div>
     </div>
     </AnimatePresence>
