@@ -5,7 +5,7 @@ import { formatCPF } from "../Format/Format"
 
 
 
-export default function Vendedor({ setInputsVendedor, setCompleteVendedor }: { setInputsVendedor: (inputs: any) => void, setCompleteVendedor : (complete : boolean) => void }) {
+export default function Vendedor({ setInputsVendedor }: { setInputsVendedor: (inputs: any) => void}) {
     const [nome, setNome] = useState('')
     const [cpf, setCpf] = useState('')
     const [motivoVenda, setMotivoVenda] = useState('')
@@ -18,16 +18,6 @@ export default function Vendedor({ setInputsVendedor, setCompleteVendedor }: { s
             nome, cpf, motivoVenda, dtVenda, dtEnvio, emailVendedor
         })
     }, [nome, cpf, motivoVenda, dtVenda, dtEnvio, emailVendedor, setInputsVendedor])
-
-    useEffect(() => {
-        if (nome && cpf && motivoVenda && dtVenda && dtEnvio && emailVendedor) {
-            setCompleteVendedor(true)
-        }
-        else {
-            setCompleteVendedor(false)
-        }
-    }, [nome, cpf, motivoVenda, dtVenda, dtEnvio, emailVendedor, setCompleteVendedor])
-
     
     return (
         <>

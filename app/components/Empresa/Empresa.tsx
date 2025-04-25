@@ -5,10 +5,9 @@ import { formatCelular, formatCEP, formatCNPJ, formatTelefone } from "../Format/
 
 interface EmpresaProps {
     setInputsEmpresa: (inputs: any) => void;
-    setCompleteEmpresa: (complete: boolean) => void;
 }
 
-export default function({ setInputsEmpresa, setCompleteEmpresa }: EmpresaProps) {
+export default function({ setInputsEmpresa }: EmpresaProps) {
     const [cnpj, setCnpj] = useState('');
     const [vidas, setVidas] = useState('')
     const [vigencia, setVigencia] = useState('')
@@ -45,18 +44,6 @@ export default function({ setInputsEmpresa, setCompleteEmpresa }: EmpresaProps) 
             telResidencial, celular, numeroBanco, banco, agencia, conta, responsavel, cargo, telefoneResponsavel, enderecoCorrespondencia,
             numeroCorrespondencia, complementoCorrespondencia, cepCorrespondencia, bairroCorrespondencia, cidadeCorrespondencia])
 
-    useEffect(() => {
-        if (cnpj && vidas && vigencia && razaoSocial && endereco && numeroCasa && bairro && cidade && cep && email && telComercial &&
-            telResidencial && celular && numeroBanco && banco && agencia && conta && responsavel && cargo && telefoneResponsavel && enderecoCorrespondencia &&
-            numeroCorrespondencia && cepCorrespondencia && bairroCorrespondencia && cidadeCorrespondencia) {
-            setCompleteEmpresa(true)
-        }
-        else {
-            setCompleteEmpresa(false)
-        }
-    }, [cnpj, vidas, vigencia, razaoSocial, endereco, numeroCasa, bairro, cidade, cep, email, telComercial,
-        telResidencial, celular, numeroBanco, banco, agencia, conta, responsavel, cargo, telefoneResponsavel, enderecoCorrespondencia,
-        numeroCorrespondencia, cepCorrespondencia, bairroCorrespondencia, cidadeCorrespondencia])
     return (
         <>
             <p className="text-center bg-blue-900 text-white text-2xl font-bold p-2">EMPRESA</p>

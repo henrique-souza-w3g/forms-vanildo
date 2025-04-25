@@ -52,13 +52,41 @@ export const formatTelefone = (value: string) => {
 }
 
 export const formatValor = (value: string) => {
-    value = value.replace(/\D/g, ""); // Remove tudo que não é número
-    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1."); // Coloca o ponto
-    return `R$ ${value}` // Garante que não passe do limite
+    // Substitui pontos por nada e mantém só números e vírgula
+    value = value.replace(/[^\d,]/g, "");
+
+    const parts = value.split(",");
+    let integer = parts[0];
+    let decimal = parts[1] || "";
+
+    // Formata parte inteira com pontos (milhares)
+    integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    if (value.includes(",")) {
+        return `R$ ${integer},${decimal.substring(0,2)}`;
+    } else {
+        return `R$ ${integer}`;
+    }
 }
 
-export const formatData = (value: string) => {
-    value = value.replace(/\D/g, ""); // Remove tudo que não é número
-    value = value.replace(/^(\d{2})(\d{2})(\d)/g, "$1/$2/$3");
-    return value.substring(0,10) // Adiciona a barra
-}
+export const formatData = (isoDate: string) => {
+    if (!isoDate) return "";
+    const [year, month, day] = isoDate.split("-");
+    return `${day}/${month}/${year}`;
+};
+
+export const formatIdade = (dataNascimento: string) => {
+    if (!dataNascimento) return "";
+    const hoje = new Date();
+    const [ano, mes, dia] = dataNascimento.split("-").map(Number);
+    const nascimento = new Date(ano, mes - 1, dia);
+
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const m = hoje.getMonth() - nascimento.getMonth();
+
+    if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+        idade--;
+    }
+
+    return idade;
+    };

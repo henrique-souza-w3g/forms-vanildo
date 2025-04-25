@@ -5,10 +5,9 @@ import { formatValor } from "../Format/Format";
 
 interface PlanoProps {
     setInputsPlano: (inputs: any) => void;
-    setCompletePlano: (complete: boolean) => void;
 }
 
-export default function PlanoEscolhido({ setInputsPlano, setCompletePlano }: PlanoProps) {
+export default function PlanoEscolhido({ setInputsPlano }: PlanoProps) {
     const [valorPlano, setValorPlano] = useState('')
     const [valorTaxa, setValorTaxa] = useState('')
     const [valorParcela, setValorParcela] = useState('')
@@ -23,11 +22,6 @@ export default function PlanoEscolhido({ setInputsPlano, setCompletePlano }: Pla
         })
     }, [valorPlano, valorTaxa, valorParcela, operadora, plano, acomodacao, pgtoParcela])
 
-    useEffect(() => {
-        if (valorPlano && valorTaxa && valorParcela && operadora && plano && acomodacao && pgtoParcela) {
-            setCompletePlano(true)
-        }
-    })
 
     return(
         <>

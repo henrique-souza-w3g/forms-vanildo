@@ -11,7 +11,7 @@ import { Button } from "./components/Button/Button";
 import { AnimatePresence, motion } from 'framer-motion';
 import { CircleCheck, CirclePlus, RotateCcw } from "lucide-react";
 import { jsPDF } from "jspdf";
-import { formatData } from "./components/Format/Format";
+import { formatIdade, formatData } from "./components/Format/Format";
 
 const montserrat = Montserrat({
   weight: ['400', '700'],
@@ -171,9 +171,6 @@ export default function Home() {
 
 
 
-  const [completeVendedor, setCompleteVendedor] = useState(false)
-  const [completeEmpresa, setCompleteEmpresa] = useState(false);
-  const [completePlano, setCompletePlano] = useState(false);
   const [completeBeneficiario, setCompleteBeneficiario] = useState(false);
   const [emailDestino, setEmailDestino] = useState('')
   const [emailCopia, setEmailCopia] = useState('')
@@ -197,19 +194,6 @@ export default function Home() {
     });
   }, [dependente, inputsVendedor, inputsEmpresa, inputsPlano, inputsBeneficiario, inputsDependentes]);
 
-  const handleRefazer = () => {
-    if (refazer === true) {
-      setInputs({
-      dependente: false,
-      vendedor: {},
-      empresa: {},
-      plano: {},
-      beneficiario: {},
-      dependentes: []
-      })
-      setRefazer(false)
-    }
-  }
   
   const atualizarDepdentes = (index: any, novoValor: Beneficiario) => {
     setInputsDependentes((prev) => {
@@ -276,7 +260,7 @@ export default function Home() {
     - Nome: ${inputsBeneficiario.nome || "Não informado"}
     - CPF: ${inputsBeneficiario.cpf || "Não informado"}
     - RG: ${inputsBeneficiario.rg || "Não informado"}
-    - Data de Nascimento: ${formatData(inputsBeneficiario.dataNascimento) || "Não informado"}
+    - Data de Nascimento: ${formatData(inputsBeneficiario.dataNascimento)  || "Não informado"} - ${formatIdade(inputsBeneficiario.dataNascimento) || "Não informado"} anos
     - Estado Civil: ${inputsBeneficiario.estadoCivil || "Não informado"}
     - Nº Cartão SUS: ${inputsBeneficiario.sus || "Não informado"}
     - Declaração de Nascido Vivo: ${inputsBeneficiario.declaracao || "Não informado"}
@@ -300,7 +284,7 @@ export default function Home() {
       - Nome: ${inputsDependentes.nome || "Não informado"}
       - CPF: ${inputsDependentes.cpf || "Não informado"}
       - RG: ${inputsDependentes.rg || "Não informado"}
-      - Data de Nascimento: ${formatData(inputsDependentes.dataNascimento) || "Não informado"}
+      - Data de Nascimento: ${formatData(inputsDependentes.dataNascimento) || "Não informado"} - ${formatIdade(inputsDependentes.dataNascimento)|| "Não informado"} anos
       - Estado Civil: ${inputsDependentes.estadoCivil || "Não informado"}
       - Nº Cartão SUS: ${inputsDependentes.sus || "Não informado"}
       - Declaração de Nascido Vivo: ${inputsDependentes.declaracao || "Não informado"}
@@ -366,10 +350,6 @@ export default function Home() {
   console.log('Inputs: ', inputs)
 
   
-    if (!completeVendedor || !completeEmpresa || !completePlano || !completeBeneficiario) {
-      alert("Por favor, complete o formulário antes de enviar.")
-      return;
-    };
 
     emailjs.send(
       'service_ee4xbqw', // Service ID
@@ -389,42 +369,24 @@ export default function Home() {
     <AnimatePresence>
     <div className={`m-0 p-0 box-border ${montserrat.className}`}>
       <Header/>
-      <Vendedor setInputsVendedor={setInputsVendedor} setCompleteVendedor={setCompleteVendedor}/>
-      {completeVendedor && (
-        <motion.div
-        key='empresa'
+      <Vendedor setInputsVendedor={setInputsVendedor} />
+      <Empresa setInputsEmpresa={setInputsEmpresa} />
+      <PlanoEscolhido setInputsPlano={setInputsPlano} />
+      <Beneficiario setInputsBeneficiario={setInputsBeneficiario}>TITULAR</Beneficiario>
+      {dependente && (
+        Array.from({ length: dependentes }).map((_, index) => (
+          <motion.div
+        key={index}
         animate={{ opacity: [0, 1], y: [100, 10 ,0] }}>
-          <Empresa setInputsEmpresa={setInputsEmpresa} setCompleteEmpresa={setCompleteEmpresa}/>
+          <Beneficiario key={`dependente-${index}`} setInputsBeneficiario={(dados) => atualizarDepdentes(index, dados)} >DEPENDENTE</Beneficiario>
         </motion.div>
+        ))
       )}
-
-      {completeEmpresa && (
-        <motion.div 
-        key='plano'
-        animate={{ opacity: [0,1], y: [100, 10, 0] }}>
-          <PlanoEscolhido setInputsPlano={setInputsPlano} setCompletePlano={setCompletePlano}/>
-        </motion.div>
-      )}
-
-      {completePlano && (
-        <motion.div>
-          <Beneficiario setInputsBeneficiario={setInputsBeneficiario} setCompleteBeneficiario={setCompleteBeneficiario}>TITULAR</Beneficiario>
-        {dependente && (
-          Array.from({ length: dependentes }).map((_, index) => (
-            <motion.div
-          key={index}
-          animate={{ opacity: [0, 1], y: [100, 10 ,0] }}>
-            <Beneficiario key={`dependente-${index}`} setInputsBeneficiario={(dados) => atualizarDepdentes(index, dados)} setCompleteBeneficiario={setCompleteBeneficiario}>DEPENDENTE</Beneficiario>
-          </motion.div>
-          ))
-        )}
         <div className="flex justify-start px-4 py-1 rounded-b-md bg-gray-300 gap-2">
           {dependente ? null : <input className="border rounded-md w-auto m-2 p-2 bg-blue-900 text-white" type="number" value={dependentes} onChange={(e) => setDependentes(e.target.valueAsNumber)} />}
           {dependente ? null : <Button valid="adicionar" onClick={() => setDependente(true)}>Adicionar Dependentes<CirclePlus className="ml-2" /></Button>}
           {dependente ? <Button valid="excluir" onClick={() => setDependente(false)}>Excluir Dependente<CirclePlus className="ml-2 rotate-45 text-red" /></Button> : null }
           </div>
-        </motion.div>
-      )}
         <div className="flex flex-col justify-center align-middle h-[100%] bg-blue-900 py-2 px-5 w-auto rounded-md mt-2 text-white gap-5">
           <div className="flex justify-between w-[70%]">
             <label className="font-bold mr-2">EMAIL PARA ENVIO</label>
@@ -439,7 +401,7 @@ export default function Home() {
         key='enviar-refazer'
         animate={{ opacity: [0, 1], y: [10, 0] }}>
         <Button valid="enviar" onClick={handleClick}>ENVIAR<CircleCheck className="check ml-2"/></Button>
-        <Button valid="refazer" onClick={handleRefazer}>NOVO FORMULÁRIO<RotateCcw className="restart ml-2"/></Button>
+        <Button valid="refazer" onClick={() => window.location.reload()}>NOVO FORMULÁRIO<RotateCcw className="restart ml-2"/></Button>
         </motion.div>
     </div>
     </AnimatePresence>

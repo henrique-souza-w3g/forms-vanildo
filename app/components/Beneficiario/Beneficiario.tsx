@@ -4,11 +4,10 @@ import { formatCelular, formatCEP, formatCPF, formatRG, formatTelefone } from ".
 
 interface BeneficiarioProps {
     children: React.ReactNode;
-    setCompleteBeneficiario: (complete: any) => void;
     setInputsBeneficiario: (inputs: any) => void;
 }
 
-export default function Beneficiario({ children, setCompleteBeneficiario, setInputsBeneficiario }: BeneficiarioProps) {
+export default function Beneficiario({ children, setInputsBeneficiario }: BeneficiarioProps) {
     const [nome, setNome] = useState('')
     const [cpf, setCPF] = useState('')
     const [rg, setRg] = useState('')
@@ -43,18 +42,6 @@ export default function Beneficiario({ children, setCompleteBeneficiario, setInp
         numero, bairro, complemento, cidade, cep, 
         telResidencial, telComercial, celular, infoPessoais, setInputsBeneficiario])
 
-    useEffect(() => {
-        if (nome && cpf && rg && dataNascimento && estadoCivil && sus && declaracao && nomeMae && altura && 
-            peso && doenca && endereco && numero && bairro && cidade && cep && telResidencial && telComercial && celular) {
-            setCompleteBeneficiario(true)
-        }
-        else {
-            setCompleteBeneficiario(false)
-        }
-    }, [nome, cpf, rg, dataNascimento, estadoCivil, sus, 
-        declaracao, nomeMae, altura, peso, doenca, endereco,
-        numero, bairro, complemento, cidade, cep, 
-        telResidencial, telComercial, celular, infoPessoais, setCompleteBeneficiario])
 
     return (
         <>
