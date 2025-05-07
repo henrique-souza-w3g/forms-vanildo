@@ -1,10 +1,14 @@
 import Image from "next/image"
 
-export const Header = () => {
+interface HeaderProps {
+    id: string
+}
+
+export const Header = ({id}: HeaderProps) => {
     return (
-        <header className="flex justify-between items-center ml-6 mr-6">
+        <header id={id} className="flex justify-between items-center ml-6 mr-6">
             <Image src="/4_0_Consultoria-removebg-preview.png" width={400} height={100} alt="Logo da 4.0 Consultoria" />
-            <h1 className="text-2xl font-bold text-blue-900">Contrato PME</h1>
+            <h1 className="header-text text-2xl font-bold">Contrato PME</h1>
         </header>
     )
 }

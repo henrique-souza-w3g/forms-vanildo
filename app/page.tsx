@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CircleCheck, CirclePlus, RotateCcw } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { formatIdade, formatData } from "./components/Format/Format";
+import { gerarPDF } from "./components/gerarPDF/gerarPDF";
 
 const montserrat = Montserrat({
   weight: ['400', '700'],
@@ -104,7 +105,7 @@ export default function Home() {
     dtVenda: '',
     dtEnvio: '',
   });
-  
+
   const [inputsEmpresa, setInputsEmpresa] = useState<Empresa>({
     cnpj: '',
     vidas: '',
@@ -134,7 +135,7 @@ export default function Home() {
     bairroCorrespondencia: '',
     cidadeCorrespondencia: '',
   });
-  
+
   const [inputsPlano, setInputsPlano] = useState<Plano>({
     operadora: '',
     plano: '',
@@ -144,7 +145,7 @@ export default function Home() {
     valorParcela: '',
     pgtoParcela: '',
   });
-  
+
   const [inputsBeneficiario, setInputsBeneficiario] = useState<Beneficiario>({
     nome: '',
     cpf: '',
@@ -171,10 +172,8 @@ export default function Home() {
 
 
 
-  const [completeBeneficiario, setCompleteBeneficiario] = useState(false);
   const [emailDestino, setEmailDestino] = useState('')
   const [emailCopia, setEmailCopia] = useState('')
-  const [refazer, setRefazer] = useState(false)
   const [inputs, setInputs] = useState({
     dependente: false,
     vendedor: {},
@@ -194,7 +193,7 @@ export default function Home() {
     });
   }, [dependente, inputsVendedor, inputsEmpresa, inputsPlano, inputsBeneficiario, inputsDependentes]);
 
-  
+
   const atualizarDepdentes = (index: any, novoValor: Beneficiario) => {
     setInputsDependentes((prev) => {
       const novos = [...prev];
@@ -203,12 +202,11 @@ export default function Home() {
     })
   }
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (!emailDestino || !inputsVendedor.emailVendedor) {
       alert('Por favor, insira o e-mail do destinatário')
       return;
     }
-    console.log(inputsDependentes)
     const emailBody = `
     --------- Dados do Vendedor ---------
     - Nome: ${inputsVendedor.nome}
@@ -219,33 +217,33 @@ export default function Home() {
     - Data do Envio do Contrato: ${formatData(inputsVendedor.dtEnvio)}
 
     --------- Dados da Empresa ---------
-    - CNPJ: ${inputsEmpresa.cnpj }
-    - Vidas: ${inputsEmpresa.vidas }
-    - Vigência: ${formatData(inputsEmpresa.vigencia) }
-    - Razão Social: ${inputsEmpresa.razaoSocial }
-    - Endereco: ${inputsEmpresa.endereco }
-    - Nº: ${inputsEmpresa.numeroCasa }
-    - Complemento: ${inputsEmpresa.complemento }
-    - CEP: ${inputsEmpresa.cep }
-    - Bairro: ${inputsEmpresa.bairro }
-    - Cidade: ${inputsEmpresa.cidade }
-    - Email: ${inputsEmpresa.email }
-    - Telefone Comercial: ${inputsEmpresa.telComercial }
-    - Telefone Residencial: ${inputsEmpresa.telResidencial }
-    - Celular: ${inputsEmpresa.celular }
-    - Banco: ${inputsEmpresa.banco }
-    - Nº do Banco: ${inputsEmpresa.numeroBanco }
-    - Agência: ${inputsEmpresa.agencia }
-    - Nº da Conta: ${inputsEmpresa.conta }
-    - Responsável: ${inputsEmpresa.responsavel }
-    - Cargo: ${inputsEmpresa.cargo }
-    - Telefone Responsável: ${inputsEmpresa.telefoneResponsavel }
-    - Endereço da Correspondência: ${inputsEmpresa.enderecoCorrespondencia }
-    - Nº da Correspondência: ${inputsEmpresa.numeroCorrespondencia }
+    - CNPJ: ${inputsEmpresa.cnpj}
+    - Vidas: ${inputsEmpresa.vidas}
+    - Vigência: ${formatData(inputsEmpresa.vigencia)}
+    - Razão Social: ${inputsEmpresa.razaoSocial}
+    - Endereco: ${inputsEmpresa.endereco}
+    - Nº: ${inputsEmpresa.numeroCasa}
+    - Complemento: ${inputsEmpresa.complemento}
+    - CEP: ${inputsEmpresa.cep}
+    - Bairro: ${inputsEmpresa.bairro}
+    - Cidade: ${inputsEmpresa.cidade}
+    - Email: ${inputsEmpresa.email}
+    - Telefone Comercial: ${inputsEmpresa.telComercial}
+    - Telefone Residencial: ${inputsEmpresa.telResidencial}
+    - Celular: ${inputsEmpresa.celular}
+    - Banco: ${inputsEmpresa.banco}
+    - Nº do Banco: ${inputsEmpresa.numeroBanco}
+    - Agência: ${inputsEmpresa.agencia}
+    - Nº da Conta: ${inputsEmpresa.conta}
+    - Responsável: ${inputsEmpresa.responsavel}
+    - Cargo: ${inputsEmpresa.cargo}
+    - Telefone Responsável: ${inputsEmpresa.telefoneResponsavel}
+    - Endereço da Correspondência: ${inputsEmpresa.enderecoCorrespondencia}
+    - Nº da Correspondência: ${inputsEmpresa.numeroCorrespondencia}
     - Complemento da Correspondência: ${inputsEmpresa.complementoCorrespondencia}
-    - CEP da Correspondência: ${inputsEmpresa.cepCorrespondencia }
-    - Bairro da Correspondência: ${inputsEmpresa.bairroCorrespondencia }
-    - Cidade da Correspondência: ${inputsEmpresa.cidadeCorrespondencia }
+    - CEP da Correspondência: ${inputsEmpresa.cepCorrespondencia}
+    - Bairro da Correspondência: ${inputsEmpresa.bairroCorrespondencia}
+    - Cidade da Correspondência: ${inputsEmpresa.cidadeCorrespondencia}
 
     --------- Plano Escolhido ---------
     - Operadora: ${inputsPlano.operadora || "Não informado"}
@@ -260,7 +258,7 @@ export default function Home() {
     - Nome: ${inputsBeneficiario.nome || "Não informado"}
     - CPF: ${inputsBeneficiario.cpf || "Não informado"}
     - RG: ${inputsBeneficiario.rg || "Não informado"}
-    - Data de Nascimento: ${formatData(inputsBeneficiario.dataNascimento)  || "Não informado"} - ${formatIdade(inputsBeneficiario.dataNascimento) || "Não informado"} anos
+    - Data de Nascimento: ${formatData(inputsBeneficiario.dataNascimento) || "Não informado"} - ${formatIdade(inputsBeneficiario.dataNascimento) || "Não informado"} anos
     - Estado Civil: ${inputsBeneficiario.estadoCivil || "Não informado"}
     - Nº Cartão SUS: ${inputsBeneficiario.sus || "Não informado"}
     - Declaração de Nascido Vivo: ${inputsBeneficiario.declaracao || "Não informado"}
@@ -284,7 +282,7 @@ export default function Home() {
       - Nome: ${inputsDependentes.nome || "Não informado"}
       - CPF: ${inputsDependentes.cpf || "Não informado"}
       - RG: ${inputsDependentes.rg || "Não informado"}
-      - Data de Nascimento: ${formatData(inputsDependentes.dataNascimento) || "Não informado"} - ${formatIdade(inputsDependentes.dataNascimento)|| "Não informado"} anos
+      - Data de Nascimento: ${formatData(inputsDependentes.dataNascimento) || "Não informado"} - ${formatIdade(inputsDependentes.dataNascimento) || "Não informado"} anos
       - Estado Civil: ${inputsDependentes.estadoCivil || "Não informado"}
       - Nº Cartão SUS: ${inputsDependentes.sus || "Não informado"}
       - Declaração de Nascido Vivo: ${inputsDependentes.declaracao || "Não informado"}
@@ -305,51 +303,20 @@ export default function Home() {
     ).join('\n') : ''}
 
     `;
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: [210, 297]
-    });
-    const lines = doc.splitTextToSize(emailBody, 180);
-    const pdfImg = "data:image/png;base64,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";
-    doc.addImage(pdfImg, 'PNG', 170, 15, 10, 10);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
-
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    let y = 10;
-
-    for (let i = 0; i < lines.length; i++) {
-      if (y + 7 > doc.internal.pageSize.height - 10) {
-        doc.addPage();
-        doc.addImage(pdfImg, 'PNG', 170, 15, 10, 10); // adiciona nova página
-        y = 10; // reseta Y
-      }
-      doc.text(lines[i], 10, y);
-      y += 7;
-    }
-
-    const pdfBase64 = doc.output('datauristring');
-
+    const pdfBase64 = gerarPDF();
   const templateParams = {
-    from_name: '4.0 Consultoria',
-    empresa_name: inputsEmpresa.razaoSocial,
-    reply_to: emailDestino,
-    to_email: inputsVendedor.emailVendedor,
-    cc_to: emailCopia,
-    name: inputsVendedor.nome,
-    message: emailBody,
-    time: new Date().toLocaleString(),
-    file: pdfBase64,
-  };
-
-  
-
-  console.log("Enviando email com:", templateParams);
-  console.log('Inputs: ', inputs)
-
-  
+      from_name: '4.0 Consultoria',
+      empresa_name: inputsEmpresa.razaoSocial,
+      to_email: inputsVendedor.emailVendedor && emailDestino,
+      cc_to: emailCopia,
+      name: inputsVendedor.nome,
+      message: emailBody,
+      time: new Date().toLocaleString(),
+      file: pdfBase64,
+    };
+    console.log(gerarPDF())
+    console.log("Enviando email com:", templateParams);
+    console.log('Inputs: ', inputs)
 
     emailjs.send(
       'service_ee4xbqw', // Service ID
@@ -367,27 +334,27 @@ export default function Home() {
 
   return (
     <AnimatePresence>
-    <div className={`m-0 p-0 box-border ${montserrat.className}`}>
-      <Header/>
-      <Vendedor setInputsVendedor={setInputsVendedor} />
-      <Empresa setInputsEmpresa={setInputsEmpresa} />
-      <PlanoEscolhido setInputsPlano={setInputsPlano} />
-      <Beneficiario setInputsBeneficiario={setInputsBeneficiario}>TITULAR</Beneficiario>
-      {dependente && (
-        Array.from({ length: dependentes }).map((_, index) => (
-          <motion.div
-        key={index}
-        animate={{ opacity: [0, 1], y: [100, 10 ,0] }}>
-          <Beneficiario key={`dependente-${index}`} setInputsBeneficiario={(dados) => atualizarDepdentes(index, dados)} >DEPENDENTE</Beneficiario>
-        </motion.div>
-        ))
-      )}
-        <div className="flex justify-start px-4 py-1 rounded-b-md bg-gray-300 gap-2">
-          {dependente ? null : <input className="border rounded-md w-auto m-2 p-2 bg-blue-900 text-white" type="number" value={dependentes} onChange={(e) => setDependentes(e.target.valueAsNumber)} />}
+      <div className={`m-0 p-0 box-border ${montserrat.className}`} id="container-print">
+        <Header id="header" />
+        <Vendedor setInputsVendedor={setInputsVendedor} />
+        <Empresa setInputsEmpresa={setInputsEmpresa} />
+        <PlanoEscolhido setInputsPlano={setInputsPlano} />
+        <Beneficiario setInputsBeneficiario={setInputsBeneficiario}>TITULAR</Beneficiario>
+        {dependente && (
+          Array.from({ length: dependentes }).map((_, index) => (
+            <motion.div
+              key={index}
+              animate={{ opacity: [0, 1], y: [100, 10, 0] }}>
+              <Beneficiario key={`dependente-${index}`} setInputsBeneficiario={(dados) => atualizarDepdentes(index, dados)} >DEPENDENTE</Beneficiario>
+            </motion.div>
+          ))
+        )}
+        <div className="dependente flex justify-start px-4 py-1 rounded-b-md gap-2">
+          {dependente ? null : <input className="input border rounded-md w-auto m-2 p-2" type="number" value={dependentes} onChange={(e) => setDependentes(e.target.valueAsNumber)} />}
           {dependente ? null : <Button valid="adicionar" onClick={() => setDependente(true)}>Adicionar Dependentes<CirclePlus className="ml-2" /></Button>}
-          {dependente ? <Button valid="excluir" onClick={() => setDependente(false)}>Excluir Dependente<CirclePlus className="ml-2 rotate-45 text-red" /></Button> : null }
-          </div>
-        <div className="flex flex-col justify-center align-middle h-[100%] bg-blue-900 py-2 px-5 w-auto rounded-md mt-2 text-white gap-5">
+          {dependente ? <Button valid="excluir" onClick={() => setDependente(false)}>Excluir Dependente<CirclePlus className="ml-2 rotate-45 text-red" /></Button> : null}
+        </div>
+        <div className="emails flex flex-col justify-center align-middle h-[100%] py-2 px-5 w-auto rounded-md mt-2 gap-5">
           <div className="flex justify-between w-[70%]">
             <label className="font-bold mr-2">EMAIL PARA ENVIO</label>
             <input className="border rounded-md w-[70%] h-[1.7em] pl-2 mr-2 text-white" type="email" name="email-destino" placeholder="Insira email aqui" value={emailDestino} onChange={e => setEmailDestino(e.target.value)} />
@@ -398,12 +365,12 @@ export default function Home() {
           </div>
         </div>
         <motion.div className="flex justify-center w-[100%] gap-2"
-        key='enviar-refazer'
-        animate={{ opacity: [0, 1], y: [10, 0] }}>
-        <Button valid="enviar" onClick={handleClick}>ENVIAR<CircleCheck className="check ml-2"/></Button>
-        <Button valid="refazer" onClick={() => window.location.reload()}>NOVO FORMULÁRIO<RotateCcw className="restart ml-2"/></Button>
+          key='enviar-refazer'
+          animate={{ opacity: [0, 1], y: [10, 0] }}>
+          <Button valid="enviar" onClick={handleClick}>ENVIAR<CircleCheck className="check ml-2" /></Button>
+          <Button valid="refazer" onClick={() => window.location.reload()}>NOVO FORMULÁRIO<RotateCcw className="restart ml-2" /></Button>
         </motion.div>
-    </div>
+      </div>
     </AnimatePresence>
   );
 }

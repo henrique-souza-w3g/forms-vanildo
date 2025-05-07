@@ -25,9 +25,60 @@ body {
   font-size: 16px;
 }
 
+input {
+  text-align: start;
+  vertical-align: middle;
+  padding: 6px;
+}
+
+select {
+  text-align: start;
+  vertical-align: middle;
+  padding: 6px;
+}
+
+
+.forms {
+  background-color: #fff;
+}
+
+.title {
+  background-color: #1c398e;
+  color: #fff
+}
+
+.emails {
+  background-color: #1c398e;
+  color: #fff;
+}
+
+.input {
+  background-color: #1c398e;
+  color: #fff;
+}
+
+.dependente {
+  background-color: #d1d5dc;
+  color: #fff;
+}
+
+.header-text {
+  color: #1c398e;
+}
+
+.button {
+  background-color: #1c398e;
+  color: #fff;
+  }
+
+.button:hover {
+  background-color: #1c398e;
+  color: #fff;
+}
+
 ::-webkit-scrollbar {
   width: 1em;
-  background-color: #162d72 ;
+  background-color: #1c398e ;
 }
 
 ::-webkit-scrollbar-track {
@@ -38,7 +89,7 @@ body {
   background-color: #cd6007;
   border-radius: 10px;
 }
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:active {
   background-color: #b85a0d;
 }
 
