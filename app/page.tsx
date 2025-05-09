@@ -12,7 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CircleCheck, CirclePlus, RotateCcw } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { formatIdade, formatData } from "./components/Format/Format";
-import { gerarPDF } from "./components/gerarPDF/gerarPDF";
+import autoTable from "jspdf-autotable";
 
 const montserrat = Montserrat({
   weight: ['400', '700'],
@@ -91,6 +91,14 @@ type Beneficiario = {
   telResidencial: string;
   celular: string;
   infoPessoais: string;
+};
+
+type GerarPDFProps = {
+  inputsVendedor: Vendedor;
+  inputsEmpresa: Empresa;
+  inputsPlano: Plano;
+  inputsBeneficiario: Beneficiario;
+  inputsDependentes: Beneficiario[];
 };
 
 export default function Home() {
@@ -303,8 +311,99 @@ export default function Home() {
     ).join('\n') : ''}
 
     `;
-    const pdfBase64 = gerarPDF();
-  const templateParams = {
+    const gerarPDF = async ({
+      inputsVendedor,
+      inputsEmpresa,
+      inputsPlano,
+      inputsBeneficiario,
+      inputsDependentes,
+    }: GerarPDFProps): Promise<string> => {
+      const doc = new jsPDF() as jsPDF & { lastAutoTable?: { finalY: number } };
+      let y = 20;
+
+      const addSection = (title: string, rows: [string, string | number | null | undefined][]) => {
+        doc.setFontSize(14);
+        doc.text(title, 14, y);
+        autoTable(doc, {
+          startY: y + 5,
+          head: [['Campo', 'Valor']],
+          body: rows.map(([campo, valor]) => [campo, valor || 'Não informado']),
+          margin: { left: 14 },
+        });
+        y = (doc as any).lastAutoTable?.finalY + 10 || y + 40;
+        y = y > 270 ? 20 : y;
+      };
+
+      addSection('Dados do Vendedor', [
+        ['Nome', inputsVendedor.nome],
+        ['CPF', inputsVendedor.cpf],
+        ['E-mail', inputsVendedor.emailVendedor],
+        ['Motivo da Venda', inputsVendedor.motivoVenda],
+        ['Data da Venda', formatData(inputsVendedor.dtVenda)],
+        ['Data do Envio', formatData(inputsVendedor.dtEnvio)],
+      ]);
+
+      addSection('Dados da Empresa', [
+        ['CNPJ', inputsEmpresa.cnpj],
+        ['Razão Social', inputsEmpresa.razaoSocial],
+        ['Vidas', inputsEmpresa.vidas],
+        ['Vigência', formatData(inputsEmpresa.vigencia)],
+        ['Endereço', `${inputsEmpresa.endereco}, ${inputsEmpresa.numeroCasa}, ${inputsEmpresa.bairro}, ${inputsEmpresa.cidade}`],
+        ['Telefone', inputsEmpresa.telefoneResponsavel],
+        ['Responsável', inputsEmpresa.responsavel],
+      ]);
+
+      addSection('Plano Escolhido', [
+        ['Operadora', inputsPlano.operadora],
+        ['Plano', inputsPlano.plano],
+        ['Acomodação', inputsPlano.acomodacao],
+        ['Valor do Plano', `R$ ${inputsPlano.valorPlano}`],
+        ['Valor da Taxa', `R$ ${inputsPlano.valorTaxa}`],
+        ['1ª Parcela', `R$ ${inputsPlano.valorParcela}`],
+        ['Pagamento da 1ª Parcela', formatData(inputsPlano.pgtoParcela)],
+      ]);
+      doc.addPage();
+      y = 20
+
+      addSection('Titular', [
+        ['Nome', inputsBeneficiario.nome],
+        ['CPF', inputsBeneficiario.cpf],
+        ['RG', inputsBeneficiario.rg],
+        ['Nascimento', `${formatData(inputsBeneficiario.dataNascimento)} - ${formatIdade(inputsBeneficiario.dataNascimento)} anos`],
+        ['Celular', inputsBeneficiario.celular],
+        ['Doença Pré-Existente', inputsBeneficiario.doenca],
+        ['Endereço', `${inputsBeneficiario.endereco}, ${inputsBeneficiario.numero}`],
+      ]);
+
+      if (inputsDependentes?.length > 0) {
+        inputsDependentes.forEach((dep, index) => {
+          y++;
+          addSection(`Dependente ${index + 1}`, [
+            ['Nome', dep.nome],
+            ['CPF', dep.cpf],
+            ['RG', dep.rg],
+            ['Nascimento', `${formatData(dep.dataNascimento)} - ${formatIdade(dep.dataNascimento)} anos`],
+            ['Altura', dep.altura],
+            ['Peso', dep.peso],
+            ['Doença Pré-Existente', dep.doenca],
+            ['Celular', dep.celular],
+          ]);
+        });
+      }
+
+      const pdfBase64 = doc.output('datauristring').split(',')[1];
+      return pdfBase64;
+    };
+
+    const pdfBase64 = await gerarPDF({
+      inputsVendedor,
+      inputsEmpresa,
+      inputsPlano,
+      inputsBeneficiario,
+      inputsDependentes,
+    });
+
+    const templateParams = {
       from_name: '4.0 Consultoria',
       empresa_name: inputsEmpresa.razaoSocial,
       to_email: inputsVendedor.emailVendedor && emailDestino,
@@ -314,9 +413,9 @@ export default function Home() {
       time: new Date().toLocaleString(),
       file: pdfBase64,
     };
-    console.log(gerarPDF())
+    console.log("Arquivo", pdfBase64)
     console.log("Enviando email com:", templateParams);
-    console.log('Inputs: ', inputs)
+    console.log('Inputs: ', inputsBeneficiario)
 
     emailjs.send(
       'service_ee4xbqw', // Service ID

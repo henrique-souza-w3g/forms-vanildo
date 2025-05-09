@@ -37,7 +37,10 @@ export default function Beneficiario({ children, setInputsBeneficiario }: Benefi
             numero, bairro, complemento, cidade, cep, 
             telResidencial, telComercial, celular, infoPessoais
         })
-    }, [])
+    }, [nome, cpf, rg, dataNascimento, estadoCivil, sus, 
+            declaracao, nomeMae, altura, peso, doenca, endereco,
+            numero, bairro, complemento, cidade, cep, 
+            telResidencial, telComercial, celular, infoPessoais])
 
 
     return (

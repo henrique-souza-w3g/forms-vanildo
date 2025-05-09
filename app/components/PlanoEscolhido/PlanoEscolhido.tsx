@@ -51,8 +51,8 @@ export default function PlanoEscolhido({ setInputsPlano }: PlanoProps) {
                     <label className="font-bold mr-2">ACOMODAÇÃO</label>
                     <select name="select-acomodacao" className="border rounded-md w-auto" value={acomodacao} onChange={(e) => setAcomodacao(e.target.value)}>
                         <option value="">Selecione</option>
-                        <option value='enfermaria'>Enfermaria</option>
-                        <option value='apartamento'>Apartamento</option>
+                        <option value='Enfermaria'>Enfermaria</option>
+                        <option value='Apartamento'>Apartamento</option>
                     </select>
                 </div>
                 <div className="grid w-[70%] h-20">
