@@ -348,7 +348,7 @@ export default function Home() {
         ['Razão Social', inputsEmpresa.razaoSocial],
         ['Vidas', inputsEmpresa.vidas],
         ['Vigência', formatData(inputsEmpresa.vigencia)],
-        ['Endereço', `${inputsEmpresa.endereco}, ${inputsEmpresa.numeroCasa}, ${inputsEmpresa.bairro}, ${inputsEmpresa.cidade}`],
+        ['Endereço', `${inputsEmpresa.endereco} - ${inputsEmpresa.numeroCasa}, ${inputsEmpresa.bairro}, ${inputsEmpresa.cidade}`],
         ['Telefone', inputsEmpresa.telefoneResponsavel],
         ['Responsável', inputsEmpresa.responsavel],
       ]);
@@ -357,9 +357,9 @@ export default function Home() {
         ['Operadora', inputsPlano.operadora],
         ['Plano', inputsPlano.plano],
         ['Acomodação', inputsPlano.acomodacao],
-        ['Valor do Plano', `R$ ${inputsPlano.valorPlano}`],
-        ['Valor da Taxa', `R$ ${inputsPlano.valorTaxa}`],
-        ['1ª Parcela', `R$ ${inputsPlano.valorParcela}`],
+        ['Valor do Plano', `${inputsPlano.valorPlano}`],
+        ['Valor da Taxa', `${inputsPlano.valorTaxa}`],
+        ['1ª Parcela', `${inputsPlano.valorParcela}`],
         ['Pagamento da 1ª Parcela', formatData(inputsPlano.pgtoParcela)],
       ]);
       doc.addPage();
@@ -372,7 +372,7 @@ export default function Home() {
         ['Nascimento', `${formatData(inputsBeneficiario.dataNascimento)} - ${formatIdade(inputsBeneficiario.dataNascimento)} anos`],
         ['Celular', inputsBeneficiario.celular],
         ['Doença Pré-Existente', inputsBeneficiario.doenca],
-        ['Endereço', `${inputsBeneficiario.endereco}, ${inputsBeneficiario.numero}`],
+        ['Endereço', `${inputsBeneficiario.endereco} - ${inputsBeneficiario.numero}, ${inputsBeneficiario.bairro}, ${inputsBeneficiario.cidade}`],
       ]);
 
       if (inputsDependentes?.length > 0) {
