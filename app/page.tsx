@@ -105,6 +105,11 @@ export default function Home() {
   const [dependente, setDependente] = useState(false)
   const [dependentes, setDependentes] = useState(0)
   const [inputsDependentes, setInputsDependentes] = useState<Beneficiario[]>([])
+  const [titularPrincipal, setTitularPrincipal] = useState<any>({});
+  const [titularesAdicionais, setTitularesAdicionais] = useState<any[]>([]);
+  const [mostrarTitulares, setMostrarTitulares] = useState(false);
+  const [quantidadeTitulares, setQuantidadeTitulares] = useState<number>(1);
+
   const [inputsVendedor, setInputsVendedor] = useState<Vendedor>({
     nome: '',
     cpf: '',
@@ -202,13 +207,31 @@ export default function Home() {
   }, [dependente, inputsVendedor, inputsEmpresa, inputsPlano, inputsBeneficiario, inputsDependentes]);
 
 
+
   const atualizarDepdentes = (index: any, novoValor: Beneficiario) => {
     setInputsDependentes((prev) => {
       const novos = [...prev];
       novos[index] = novoValor;
       return novos;
     })
-  }
+  };
+
+  const adicionarTitulares = () => {
+    setTitularesAdicionais([...titularesAdicionais, {}]);
+  };
+
+  const atualizarTitulares = (index: number, dados: any) => {
+    const novosTitulares = [...titularesAdicionais];
+    novosTitulares[index] = dados;
+    setTitularesAdicionais(novosTitulares);
+  };
+
+  const removerTitulares = (index: number) => {
+    const novosTitulares = [...titularesAdicionais];
+    novosTitulares.splice(index, 1);
+    setTitularesAdicionais(novosTitulares);
+  };
+
 
   const handleClick = async () => {
     if (!emailDestino || !inputsVendedor.emailVendedor) {
@@ -260,33 +283,59 @@ export default function Home() {
     - Valor do Plano: R$ ${inputsPlano.valorPlano || "Não informado"}
     - Valor da Taxa: R$ ${inputsPlano.valorTaxa || "Não informado"}
     - Valor da 1º Parcela: R$ ${inputsPlano.valorParcela || "Não informado"}
-    - Pagamento da 1º Parcela: ${formatData(inputsPlano.pgtoParcela) || "Não informado"}
+    - Pagamento da 1º Parcela: ${formatData(inputsPlano.pgtoParcela) || "Não informado"} 
 
-    --------- Titular ---------
-    - Nome: ${inputsBeneficiario.nome || "Não informado"}
-    - CPF: ${inputsBeneficiario.cpf || "Não informado"}
-    - RG: ${inputsBeneficiario.rg || "Não informado"}
-    - Data de Nascimento: ${formatData(inputsBeneficiario.dataNascimento) || "Não informado"} - ${formatIdade(inputsBeneficiario.dataNascimento) || "Não informado"} anos
-    - Estado Civil: ${inputsBeneficiario.estadoCivil || "Não informado"}
-    - Nº Cartão SUS: ${inputsBeneficiario.sus || "Não informado"}
-    - Declaração de Nascido Vivo: ${inputsBeneficiario.declaracao || "Não informado"}
-    - Nome da Mãe: ${inputsBeneficiario.nomeMae || "Não informado"}
-    - Altura: ${inputsBeneficiario.altura || "Não informado"}
-    - Peso: ${inputsBeneficiario.peso || "Não informado"}
-    - Possui Doença Pré-Existente: ${inputsBeneficiario.doenca || "Não informado"}
-    - Endereço: ${inputsBeneficiario.endereco || "Não informado"}
-    - Nº: ${inputsBeneficiario.numero || "Não informado"}
-    - Complemento: ${inputsBeneficiario.complemento || "Não informado"}
-    - CEP: ${inputsBeneficiario.cep || "Não informado"}
-    - Bairro: ${inputsBeneficiario.bairro || "Não informado"}
-    - Cidade: ${inputsBeneficiario.cidade || "Não informado"}
-    - Telefone Comercial: ${inputsBeneficiario.telComercial || "Não informado"}
-    - Telefone Residencial: ${inputsBeneficiario.telResidencial || "Não informado"}
-    - Celular: ${inputsBeneficiario.celular || "Não informado"}
-    - Informações Pessoais: ${inputsBeneficiario.infoPessoais || "Não informado"}
+    --------- Titular 1 ---------
+      - Nome: ${inputsBeneficiario.nome || "Não informado"}
+      - CPF: ${inputsBeneficiario.cpf || "Não informado"}
+      - RG: ${inputsBeneficiario.rg || "Não informado"}
+      - Data de Nascimento: ${formatData(inputsBeneficiario.dataNascimento) || "Não informado"} - ${formatIdade(inputsBeneficiario.dataNascimento) || "Não informado"} anos
+      - Estado Civil: ${inputsBeneficiario.estadoCivil || "Não informado"}
+      - Nº Cartão SUS: ${inputsBeneficiario.sus || "Não informado"}
+      - Declaração de Nascido Vivo: ${inputsBeneficiario.declaracao || "Não informado"}
+      - Nome da Mãe: ${inputsBeneficiario.nomeMae || "Não informado"}
+      - Altura: ${inputsBeneficiario.altura || "Não informado"}
+      - Peso: ${inputsBeneficiario.peso || "Não informado"}
+      - Possui Doença Pré-Existente: ${inputsBeneficiario.doenca || "Não informado"}
+      - Endereço: ${inputsBeneficiario.endereco || "Não informado"}
+      - Nº: ${inputsBeneficiario.numero || "Não informado"}
+      - Complemento: ${inputsBeneficiario.complemento || "Não informado"}
+      - CEP: ${inputsBeneficiario.cep || "Não informado"}
+      - Bairro: ${inputsBeneficiario.bairro || "Não informado"}
+      - Cidade: ${inputsBeneficiario.cidade || "Não informado"}
+      - Telefone Comercial: ${inputsBeneficiario.telComercial || "Não informado"}
+      - Telefone Residencial: ${inputsBeneficiario.telResidencial || "Não informado"}
+      - Celular: ${inputsBeneficiario.celular || "Não informado"}
+      - Informações Pessoais: ${inputsBeneficiario.infoPessoais || "Não informado"}
+
+    ${titularesAdicionais.length > 0 ? titularesAdicionais.map((t, index) =>
+      `--------- Titular ${index + 2} ---------
+      - Nome: ${t.nome || "Não informado"}
+      - CPF: ${t.cpf || "Não informado"}
+      - RG: ${t.rg || "Não informado"}
+      - Data de Nascimento: ${formatData(t.dataNascimento) || "Não informado"} - ${formatIdade(t.dataNascimento) || "Não informado"} anos
+      - Estado Civil: ${t.estadoCivil || "Não informado"}
+      - Nº Cartão SUS: ${t.sus || "Não informado"}
+      - Declaração de Nascido Vivo: ${t.declaracao || "Não informado"}
+      - Nome da Mãe: ${t.nomeMae || "Não informado"}
+      - Altura: ${t.altura || "Não informado"}
+      - Peso: ${t.peso || "Não informado"}
+      - Possui Doença Pré-Existente: ${t.doenca || "Não informado"}
+      - Endereço: ${t.endereco || "Não informado"}
+      - Nº: ${t.numero || "Não informado"}
+      - Complemento: ${t.complemento || "Não informado"}
+      - CEP: ${t.cep || "Não informado"}
+      - Bairro: ${t.bairro || "Não informado"}
+      - Cidade: ${t.cidade || "Não informado"}
+      - Telefone Comercial: ${t.telComercial || "Não informado"}
+      - Telefone Residencial: ${t.telResidencial || "Não informado"}
+      - Celular: ${t.celular || "Não informado"}
+      - Informações Pessoais: ${t.infoPessoais || "Não informado"}
+      `).join('\n') : ''}
+
 
     ${dependente && dependentes > 0 ? inputsDependentes.map((inputsDependentes, index) =>
-      `--------- Dependente ${index + 1} ---------
+        `--------- Dependente ${index + 1} ---------
       - Nome: ${inputsDependentes.nome || "Não informado"}
       - CPF: ${inputsDependentes.cpf || "Não informado"}
       - RG: ${inputsDependentes.rg || "Não informado"}
@@ -308,7 +357,7 @@ export default function Home() {
       - Telefone Residencial: ${inputsDependentes.telResidencial || "Não informado"}
       - Celular: ${inputsDependentes.celular || "Não informado"}
       - Informações Pessoais: ${inputsDependentes.infoPessoais || "Não informado"}\n`
-    ).join('\n') : ''}
+      ).join('\n') : ''}
 
     `;
     const gerarPDF = async ({
@@ -365,16 +414,61 @@ export default function Home() {
       doc.addPage();
       y = 20
 
-      addSection('Titular', [
+      addSection('Titular 1', [
         ['Nome', inputsBeneficiario.nome],
         ['CPF', inputsBeneficiario.cpf],
         ['RG', inputsBeneficiario.rg],
-        ['Nascimento', `${formatData(inputsBeneficiario.dataNascimento)} - ${formatIdade(inputsBeneficiario.dataNascimento)} anos`],
+        ['Data de Nascimento', `${formatData(inputsBeneficiario.dataNascimento) || "Não informado"} - ${formatIdade(inputsBeneficiario.dataNascimento) || "Não informado"}`],
+        ['Estado Civil', inputsBeneficiario.estadoCivil],
+        ['Nº Cartão SUS', inputsBeneficiario.sus],
+        ['Declar. Nascido Vivo', inputsBeneficiario.declaracao],
+        ['Nome da Mãe', inputsBeneficiario.nomeMae],
+        ['Altura', inputsBeneficiario.altura],
+        ['Peso', inputsBeneficiario.peso],
+        ['Possui Doença Pré-Existente', inputsBeneficiario.doenca],
+        ['Endereço', inputsBeneficiario.endereco],
+        ['Nº', inputsBeneficiario.numero],
+        ['Complemento', inputsBeneficiario.complemento],
+        ['Bairro', inputsBeneficiario.bairro],
+        ['Cidade', inputsBeneficiario.cidade],
+        ['CEP', inputsBeneficiario.cep],
+        ['Tel. Residencial', inputsBeneficiario.telResidencial],
+        ['Tel. Comercial', inputsBeneficiario.telComercial],
         ['Celular', inputsBeneficiario.celular],
-        ['Doença Pré-Existente', inputsBeneficiario.doenca],
-        ['Endereço', `${inputsBeneficiario.endereco} - ${inputsBeneficiario.numero}, ${inputsBeneficiario.bairro}, ${inputsBeneficiario.cidade}`],
+        ['Informações Adicionais', inputsBeneficiario.infoPessoais]
       ]);
+      doc.addPage()
+      y = 20
 
+      if (titularesAdicionais.length > 0) {
+        titularesAdicionais.forEach((t, i) => {
+          addSection(`Titular ${i + 2}`, [
+            ['Nome', t.nome],
+            ['CPF', t.cpf],
+            ['RG', t.rg],
+            ['Data de Nascimento', `${formatData(t.dataNascimento) || "Não informado"} - ${formatIdade(t.dataNascimento) || "Não informado"}`],
+            ['Estado Civil', t.estadoCivil],
+            ['Nº Cartão SUS', t.sus],
+            ['Declar. Nascido Vivo', t.declaracao],
+            ['Nome da Mãe', t.nomeMae],
+            ['Altura', t.altura],
+            ['Peso', t.peso],
+            ['Possui Doença Pré-Existente', t.doenca],
+            ['Endereço', t.endereco],
+            ['Nº', t.numero],
+            ['Complemento', t.complemento],
+            ['Bairro', t.bairro],
+            ['Cidade', t.cidade],
+            ['CEP', t.cep],
+            ['Tel. Residencial', t.telResidencial],
+            ['Tel. Comercial', t.telComercial],
+            ['Celular', t.celular],
+            ['Informações Adicionais', t.infoPessoais],
+          ]);
+          doc.addPage();
+          y = 20
+        });
+      }
       if (inputsDependentes?.length > 0) {
         inputsDependentes.forEach((dep, index) => {
           y++;
@@ -382,11 +476,24 @@ export default function Home() {
             ['Nome', dep.nome],
             ['CPF', dep.cpf],
             ['RG', dep.rg],
-            ['Nascimento', `${formatData(dep.dataNascimento)} - ${formatIdade(dep.dataNascimento)} anos`],
+            ['Data de Nascimento', `${formatData(dep.dataNascimento) || "Não informado"} - ${formatIdade(dep.dataNascimento) || "Não informado"}`],
+            ['Estado Civil', dep.estadoCivil],
+            ['Nº Cartão SUS', dep.sus],
+            ['Declar. Nascido Vivo', dep.declaracao],
+            ['Nome da Mãe', dep.nomeMae],
             ['Altura', dep.altura],
             ['Peso', dep.peso],
-            ['Doença Pré-Existente', dep.doenca],
+            ['Possui Doença Pré-Existente', dep.doenca],
+            ['Endereço', dep.endereco],
+            ['Nº', dep.numero],
+            ['Complemento', dep.complemento],
+            ['Bairro', dep.bairro],
+            ['Cidade', dep.cidade],
+            ['CEP', dep.cep],
+            ['Tel. Residencial', dep.telResidencial],
+            ['Tel. Comercial', dep.telComercial],
             ['Celular', dep.celular],
+            ['Informações Adicionais', dep.infoPessoais]
           ]);
         });
       }
@@ -413,17 +520,13 @@ export default function Home() {
       time: new Date().toLocaleString(),
       file: pdfBase64,
     };
-    console.log("Arquivo", pdfBase64)
-    console.log("Enviando email com:", templateParams);
-    console.log('Inputs: ', inputsBeneficiario)
 
     emailjs.send(
       'service_ee4xbqw', // Service ID
       'template_b3h44af', // Template ID
       templateParams,
       'FqXs7MJHuqbGb01VE' // User ID
-    ).then(response => {
-      console.log("Email enviado!", response);
+    ).then(_ => {
       alert("Email enviado com sucesso!");
     }).catch(error => {
       console.error("Erro ao enviar email", error);
@@ -438,7 +541,37 @@ export default function Home() {
         <Vendedor setInputsVendedor={setInputsVendedor} />
         <Empresa setInputsEmpresa={setInputsEmpresa} />
         <PlanoEscolhido setInputsPlano={setInputsPlano} />
-        <Beneficiario setInputsBeneficiario={setInputsBeneficiario}>TITULAR</Beneficiario>
+        <Beneficiario setInputsBeneficiario={setInputsBeneficiario}>TITULAR ARROCHA</Beneficiario>
+        {mostrarTitulares && (
+          Array.from({ length: quantidadeTitulares }).map((_, index) => (
+            <motion.div
+              key={index}
+              animate={{ opacity: [0, 1], y: [100, 10, 0] }}>
+              <Beneficiario
+                key={`titular-${index}`}
+                setInputsBeneficiario={(dados) => atualizarTitulares(index, dados)}>
+                TITULAR {index + 2}
+              </Beneficiario>
+            </motion.div>
+          ))
+        )}
+        <div className="titular flex justify-start px-4 py-1 gap-2">
+          {!mostrarTitulares && (
+            <>
+              <input
+                className="input border rounded-md w-auto m-2 p-2"
+                type="number"
+                min={1}
+                value={quantidadeTitulares}
+                onChange={(e) => setQuantidadeTitulares(e.target.valueAsNumber)}
+              />
+              <Button valid="adicionar" onClick={() => setMostrarTitulares(true)}>Adicionar Titulares<CirclePlus className="ml-2" /></Button>
+            </>
+          )}
+          {mostrarTitulares && (
+            <Button valid="excluir" onClick={() => setMostrarTitulares(false)}>Remover Titulares<CirclePlus className="ml-2 rotate-45 text-red" /></Button>
+          )}
+        </div>
         {dependente && (
           Array.from({ length: dependentes }).map((_, index) => (
             <motion.div
